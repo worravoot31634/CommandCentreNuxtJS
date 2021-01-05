@@ -117,4 +117,7 @@ export default {
 .theme--light.v-application {
   background-color: #68783c;
 }
+.container {
+  margin-left: 0;
+}
 </style>

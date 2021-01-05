@@ -1,44 +1,27 @@
 <template>
   <v-card class="mx-auto">
     <v-container class="row justify-center row--dense">
-      <v-row class="justify-center pa-4" dense
-        ><v-col cols="11"> <h2>ภารกิจทั้งหมด</h2> </v-col>
+      <v-col cols="11"> <h2>ภารกิจทั้งหมด</h2></v-col>
+      <v-row class="justify-center" dense>
+        <v-col v-for="(item, i) in items" :key="i" cols="11">
+          <v-card :color="item.color">
+            <div class="d-flex flex-no-wrap justify-space-left">
+              <v-avatar class="ma-3" size="125" tile>
+                <v-img :src="item.src"></v-img>
+              </v-avatar>
+              <div>
+                <v-card-title
+                  class="headline"
+                  v-text="item.locationName"
+                ></v-card-title>
+                <v-card-subtitle v-text="item.reportTime"></v-card-subtitle>
+                <v-card-text> Hello</v-card-text>
+              </div>
+            </div>
+          </v-card>
+        </v-col>
       </v-row>
     </v-container>
-    <v-row class="justify-center" dense>
-      <!-- List -->
-      <v-col
-        v-for="(item, i) in items"
-        :key="i"
-        cols="11"
-        :class="`rounded-lg`"
-        class="pa-4 text-center text-no-wrap"
-      >
-        <v-hover>
-          <template v-slot:default="{ hover }">
-            <row class="row justify-left">
-              <v-col cols="12">
-                <v-card :elevation="hover ? 8 : 4" class="mx-auto">
-                  <row class="row justify-left">
-                    <v-col cols="3">
-                      <v-avatar class="ma-1" size="125" tile>
-                        <v-img :src="item.src"></v-img>
-                      </v-avatar>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-avatar class="ma-1" size="125" tile>
-                        <v-img :src="item.src"></v-img>
-                      </v-avatar>
-                    </v-col>
-                    <v-col cols="1"> BTN </v-col>
-                  </row>
-                </v-card>
-              </v-col>
-            </row>
-          </template>
-        </v-hover>
-      </v-col>
-    </v-row>
   </v-card>
 </template>
 <script>
