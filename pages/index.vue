@@ -5,7 +5,7 @@
       language="th"
       :center="{ lat: locations[0].latitude, lng: locations[0].longitude }"
       :options="{ fullscreenControl: true }"
-      :zoom="13"
+      :zoom="15"
     >
       <GMapMarker
         v-for="(location, index) in locations"
@@ -52,8 +52,8 @@ export default {
     locations: [
       {
         locationName: '',
-        latitude: 0,
-        longitude: 0,
+        latitude: 14.5347161,
+        longitude: 101.3934069,
       },
     ],
   }),
@@ -69,5 +69,16 @@ p {
   width: 100%;
   height: 100%;
   position: absolute;
+}
+/* .theme--light.v-application {
+  background-color: #68783c;
+} */
+.navTitle {
+  height: 64px;
+}
+
+.container {
+  margin-left: 0px;
+  padding: 0px;
 }
 </style>

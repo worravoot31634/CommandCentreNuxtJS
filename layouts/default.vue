@@ -73,7 +73,7 @@ export default {
   data() {
     return {
       clipped: false,
-      drawer: false,
+      drawer: true,
       fixed: true,
       items: [
         {
@@ -92,7 +92,7 @@ export default {
           to: '/report',
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-file-chart',
           title: 'รายงานภารกิจ',
           to: '/missionReport',
         },
@@ -111,13 +111,25 @@ export default {
 }
 </script>
 <style>
-.navTitle {
-  height: 64px;
+.GMap__Wrapper {
+  width: 100%;
+  height: 100%;
+}
+.GMap,
+p {
+  width: 100%;
+  height: 100%;
+  position: absolute;
 }
 .theme--light.v-application {
   background-color: #68783c;
 }
-.container {
-  margin-left: 0;
+.navTitle {
+  height: 64px;
+}
+
+.container .googleMap {
+  margin-left: 0px;
+  padding: 0px;
 }
 </style>
