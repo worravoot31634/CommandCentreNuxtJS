@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-container>
-      <v-container class="row justify-center row--dense">
+      <v-container class="justify-center">
         <v-row class="justify-center pa-4" dense>
           <v-col cols="11">
             <h2>ภารกิจทั้งหมด</h2>
