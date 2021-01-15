@@ -32,6 +32,8 @@ export default {
 
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
+    'bootstrap-vue/nuxt',
+
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     [
@@ -61,7 +63,13 @@ export default {
       },
     ],
   ],
-
+  bootstrapVue: {
+    bootstrapCSS: false,
+    bootstrapVueCSS: false,
+  },
+  styleResources: {
+    scss: './scss/*.scss',
+  },
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {},
 
@@ -69,7 +77,7 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      elector: true,
+      dark: false,
       themes: {
         dark: {
           primary: colors.blue.darken2,
@@ -79,7 +87,10 @@ export default {
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
           success: colors.green.accent3,
-          elector: '#68783c',
+          background: '#68783c',
+        },
+        light: {
+          background: '#68783c',
         },
       },
     },
