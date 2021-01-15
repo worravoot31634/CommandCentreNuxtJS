@@ -7,11 +7,11 @@
       fixed
       app
     >
-      <v-img
+      <!-- <v-img
         src="https://static.vecteezy.com/system/resources/thumbnails/000/585/267/small/1maret-11.jpg"
         max-height="64"
         class="grey darken-4"
-      ></v-img>
+      ></v-img> -->
       <!-- <v-toolbar-title class="navTitle" fill-height v-text="title" /> -->
       <v-list>
         <v-list-item
@@ -48,9 +48,9 @@
       </v-btn> -->
     </v-app-bar>
     <v-main>
-      <v-container>
-        <nuxt />
-      </v-container>
+      <!-- <v-container> -->
+      <nuxt />
+      <!-- </v-container> -->
     </v-main>
     <!-- <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
       <v-list>
@@ -111,7 +111,7 @@ export default {
 }
 </script>
 <style>
-.GMap__Wrapper {
+/* .GMap__Wrapper {
   width: 100%;
   height: 100%;
 }
@@ -120,16 +120,19 @@ p {
   width: 100%;
   height: 100%;
   position: absolute;
-}
+} */
 .theme--light.v-application {
+  background-color: #68783c;
+}
+.theme--dark.v-application {
   background-color: #68783c;
 }
 .navTitle {
   height: 64px;
 }
 
-.container .googleMap {
+/* .container {
   margin-left: 0px;
   padding: 0px;
-}
+} */
 </style>
