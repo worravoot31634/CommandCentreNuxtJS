@@ -29,6 +29,7 @@
     "nuxt": "^2.14.6",
     "nuxt-gmaps": "^1.2.10",
     "vue": "^2.6.12",
+    "vue2-google-maps": "^0.10.7",
     "vuesax": "^3.12.2"
   },
   "devDependencies": {

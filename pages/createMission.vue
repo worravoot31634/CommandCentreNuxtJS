@@ -12,7 +12,7 @@
           <v-container>
             <v-row>
               <v-col cols="12" md="6">
-                <v-card>
+                <v-card ref="reportInfo" height="100%">
                   <v-card-title class="title-text">
                     {{ imgElephant }}
                   </v-card-title>
@@ -40,16 +40,18 @@
                       <img :src="image.src" />
                     </v-list-item-avatar>
                   </v-col>
-
-                  <!-- <v-card-actions class="justify-center">
-                    <v-btn class="pa-0"> Normal </v-btn>
-                    <v-btn class="pa-0"> Normal </v-btn>
-                  </v-card-actions> -->
-                  <v-row class="mt-10">
+                  <v-row class="mt-10" style="padding: 3%">
                     <v-col cols="12" md="16" align="center">
-                      <v-btn class="px-8 mx-10"> กลับ </v-btn>
+                      <v-btn class="px-8 mx-10">
+                        <v-card-text style="font-weight: bold; font-size: 18"
+                          >กลับ</v-card-text
+                        >
+                      </v-btn>
                       <v-btn class="px-2 mx-10" color="#B7D36A">
-                        สร้างภารกิจ
+                        <v-card-text
+                          style="color: white; font-weight: bold; font-size: 18"
+                          >สร้างภารกิจ</v-card-text
+                        >
                       </v-btn>
                     </v-col>
                   </v-row>
@@ -57,10 +59,19 @@
               </v-col>
 
               <v-col cols="12" md="6">
-                <v-card>
-                  <v-card-text class="title-text">
+                <v-card height="100%">
+                  <v-card-title class="title-text">
                     {{ sceneOfaccident }}
-                  </v-card-text>
+                  </v-card-title>
+                  <v-list-item-content style="padding: 2%" height="100%">
+                    <GmapMap
+                      ref="mapRef"
+                      :center="{ lat: 10, lng: 10 }"
+                      :zoom="7"
+                      map-type-id="terrain"
+                      style="width: 500px; height: 600px"
+                    />
+                  </v-list-item-content>
                 </v-card>
               </v-col>
             </v-row>
@@ -106,9 +117,42 @@
                       <v-row class="h3 pt-1 title-text">
                         <v-col cols="8" md="4">{{ notice }}</v-col>
                         <v-col cols="4" md="8" class="text-right">
-                          <v-btn style="margin: 1%" color="red">
-                            <v-icon color="white"> mdi-delete</v-icon>
-                          </v-btn>
+                          <v-dialog v-model="dialog" persistent max-width="400">
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                style="margin: 1%"
+                                color="red"
+                                v-bind="attrs"
+                                v-on="on"
+                                ><v-icon color="white"> mdi-delete</v-icon>
+                              </v-btn>
+                            </template>
+                            <v-card>
+                              <v-card-title
+                                style="font-size: 16px; font-weight: bold"
+                                class="justify-center"
+                              >
+                                {{ msg_dialog_trash }}
+                              </v-card-title>
+                              <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                  color="green darken-1"
+                                  text
+                                  @click="dialog = false"
+                                >
+                                  {{ cancel }}
+                                </v-btn>
+                                <v-btn
+                                  color="green darken-1"
+                                  text
+                                  @click="dialog = false"
+                                >
+                                  {{ accept }}
+                                </v-btn>
+                              </v-card-actions>
+                            </v-card>
+                          </v-dialog>
                         </v-col>
                       </v-row>
                     </v-list-item-title>
@@ -146,12 +190,16 @@
 export default {
   data() {
     return {
+      dialog: false,
       tab: null,
+      accept: 'ตกลง',
+      cancel: 'ยกเลิก',
       items: ['รายละเอียดการแจ้งเตือน', 'รายงานการแจ้งเตือน'],
       text: ['Jame', 'Logan'],
       text2: 'Suranaree University Of Technology',
       imgElephant: 'ภาพเหตุการณ์',
       sceneOfaccident: 'จุดเกิดเหตุ',
+      msg_dialog_trash: 'ท่านต้องการย้ายการแจ้งเตือนไปที่ถังขยะหรือไม่',
       itemsImages: [
         {
           src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
@@ -181,7 +229,27 @@ export default {
         },
       ],
       notice: 'หมายเหตุ',
+      markers: [
+        {
+          position: { lat: 10, lng: 10 },
+        },
+      ],
     }
+  },
+  mounted() {
+    this.matchHeight()
+    this.initGoogleMap()
+  },
+  methods: {
+    matchHeight() {
+      // const height = this.$refs.reportInfo.clientHeight
+      // console.log(height)
+    },
+    initGoogleMap() {
+      // this.$refs.mapRef.$mapPromise.then((map) => {
+      //   map.panTo({ lat: 1.38, lng: 103.8 })
+      // })
+    },
   },
 }
 </script>
