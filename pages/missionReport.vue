@@ -93,7 +93,7 @@
 
     <v-container>
       <v-row>
-        <v-col>
+        <v-col cols="">
           <v-col><v-card color="green">AAAAAAAAAAA</v-card></v-col>
           <v-col><v-card color="green">BBBBBBBBB</v-card></v-col>
         </v-col>
