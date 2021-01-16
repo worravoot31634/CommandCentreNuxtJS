@@ -3,15 +3,15 @@
     <v-card style="margin: 2%">
       <v-row>
         <!-- icon and caption -->
-        <v-col cols="12" md="4" class="px-0" no-gutters>
+        <v-col cols="12" md="8" class="px-0" no-gutters>
           <v-list-item>
             <v-icon>mdi-filter-variant-plus</v-icon>
-            <v-card-title class="subtitle-2"> เลือกช่วงเวลา </v-card-title>
+            <v-card-title class="subtitle-1"> เลือกช่วงเวลา </v-card-title>
             <!-- Start Date picker -->
             <v-menu
               v-model="startDateMenu"
               :close-on-content-click="false"
-              max-width="290"
+              max-width="30%"
               class="justify-center"
             >
               <template v-slot:activator="{ on, attrs }">
@@ -32,6 +32,7 @@
               <v-date-picker
                 v-model="startDate"
                 locale="th-TH"
+                full-width
                 @change="startDateMenu = false"
               ></v-date-picker>
             </v-menu>
@@ -39,43 +40,12 @@
           </v-list-item>
         </v-col>
         <!-- end icon and caption -->
-
-        <!-- start date picker col -->
-        <v-col cols="12" md="4" class="px-0" no-gutters>
-          <v-list-item class="text-right">
-            <v-card-title class="subtitle-2 pr-8"> ถึง </v-card-title>
-            <!-- End Date picker -->
-            <v-menu
-              v-model="endDateMenu"
-              :close-on-content-click="false"
-              max-width="290"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  :value="computedEndDateFormatted"
-                  readonly
-                  solo
-                  v-bind="attrs"
-                  v-on="on"
-                  append-icon="mdi-calendar"
-                  hide-details
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="endDate"
-                locale="th-TH"
-                @change="endDateMenu = false"
-              ></v-date-picker>
-            </v-menu>
-            <!-- end of end date picker -->
-          </v-list-item>
-        </v-col>
         <!-- end date picker col -->
 
         <!-- severity col -->
         <v-col cols="12" md="4" no-gutters>
           <v-list-item>
-            <v-card-title class="subtitle-2"> ความรุนแรง </v-card-title>
+            <v-card-title class="subtitle-1"> ความรุนแรง </v-card-title>
             <!-- select severity -->
             <v-select
               :items="violentType"
@@ -161,9 +131,10 @@
                 <v-card>
                   <v-container>
                     <v-row>
-                      <v-col cols="12" md="4">
+                      <v-col cols="12" md="4" align-self="center">
                         <v-img
                           width="100%"
+                          height="auto"
                           src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
                         ></v-img>
                       </v-col>
@@ -177,7 +148,7 @@
                               >รุนแรงมาก</v-card-title
                             >
                           </v-list-item>
-                          <v-card-title class="pt-0">{{
+                          <v-card-title class="pt-0 black--text">{{
                             locationName
                           }}</v-card-title>
                           <v-card-subtitle>{{ situationTime }}</v-card-subtitle>
@@ -284,5 +255,10 @@ export default {
 <style scoped>
 .severity {
   color: red;
+}
+.title-text {
+  color: #000;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 </style>
