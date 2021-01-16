@@ -1,46 +1,28 @@
 <template>
-  <GMap
-    ref="gMap"
-    language="th"
-    :center="{ lat: locations[0].latitude, lng: locations[0].longitude }"
-    :options="{ fullscreenControl: true }"
-    :zoom="15"
-  >
-    <GMapMarker
-      v-for="(location, index) in locations"
-      :key="index"
-      :position="{
-        lat: locations[index].latitude,
-        lng: locations[index].longitude,
-      }"
-      @click="currentLocation = location[index]"
+  <div>
+    <gmap-map
+      :center="{ lat: 39.933049, lng: 32.858912 }"
+      :zoom="6"
+      :options="mapOptions"
+      style="width: 100%; height: 290px"
     >
-      <GMapInfoWindow :options="{ maxWidth: 300 }">
-        <code>
-          <vs-container fill-height fluid>
-            <vs-row align="center" justify="center">
-              <img
-                :src="'https://www.elephantnaturepark.org/wp-content/uploads/2020/04/94351084_2570825139826450_7563146999747313664_n-600x374.jpg'"
-                :width="100"
-                :height="100"
-              />
-            </vs-row>
-            <vs-row><i class="bx bxs-donate-heart"></i></vs-row>
-            <vs-row align="center" justify="center">
-              Location Name: {{ locations[index].locationName }}
-            </vs-row>
-            <vs-row align="center" justify="center">
-              Lat: {{ locations[index].latitude }}
-            </vs-row>
-            <vs-row align="center" justify="center">
-              Lng: {{ locations[index].longitude }}
-            </vs-row>
-          </vs-container>
-        </code>
-      </GMapInfoWindow>
-    </GMapMarker>
-    <!-- <GMapCircle :options="circleOptions" /> -->
-  </GMap>
+      <gmap-marker
+        :key="index"
+        v-for="(m, index) in markers"
+        :position="m.position"
+        @click="toggleInfoWindow(m, index)"
+        :option="MarkerOptions"
+      />
+      <gmap-info-window
+        :options="infoOptions"
+        :position="infoWindowPos"
+        :opened="infoWinOpen"
+        @closeclick="infoWinOpen = false"
+      >
+        <div v-html="infoContent"></div>
+      </gmap-info-window>
+    </gmap-map>
+  </div>
 </template>
 
 <script>
@@ -48,13 +30,32 @@ export default {
   data: () => ({
     currentLocation: {},
     locations: [
-      {
-        locationName: '',
-        latitude: 14.5347161,
-        longitude: 101.3934069,
-      },
+      { locationName: 'hahaha', latitude: 14.4386654, longitude: 101.3700541 },
     ],
   }),
+  mounted() {
+    this.initialize()
+  },
+  created() {},
+  methods: {
+    async initialize() {
+      await this.$fire.firestore
+        .collection('mission')
+        .orderBy('startTimeStamp')
+        .get()
+        .then((docs) => {
+          docs.docs.forEach((value, index) => {
+            this.locations.push({
+              locationName: value.data().locationName,
+              latitude: value.data().latLng.latitude,
+              longitude: value.data().latLng.longitude,
+            })
+          })
+
+          console.log('this location: => ', this.locations)
+        })
+    },
+  },
 }
 </script>
 <style>
