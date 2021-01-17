@@ -132,11 +132,13 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" md="4" align-self="center">
-                        <v-img
-                          width="100%"
-                          height="auto"
-                          src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-                        ></v-img>
+                        <v-card style="height: 100%" fluid>
+                          <!-- IMAGE -->
+                          <v-img
+                            src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+                            style="min-height: 100%; height: 100%"
+                          />
+                        </v-card>
                       </v-col>
                       <v-col cols="12" md="8">
                         <v-list-item-content>
