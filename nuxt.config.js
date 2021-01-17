@@ -17,7 +17,7 @@ export default {
   css: ['~/assets/fonts/prompt.css', '~/assets/css/styles.css'],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: [{ src: '~/plugins/googleMap', ssr: true }],
+  plugins: [{ src: '~/plugins/googleMap', ssr: true }, '~/plugins/vuesax'],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,
@@ -76,7 +76,11 @@ export default {
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
+    treeShake: true,
     theme: {
+      font: {
+        family: 'Prompt'
+      },
       dark: false,
       themes: {
         dark: {
