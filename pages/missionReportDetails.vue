@@ -2,7 +2,7 @@
   <v-card color="basil">
     <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
       <v-tab v-for="item in items" :key="item">
-        {{ item }}
+        <h1 class="mdc-typography-styles-headline1">{{ item }}</h1>
       </v-tab>
     </v-tabs>
 
@@ -25,21 +25,22 @@
                   </v-carousel>
                   <v-list-item-content class="pt-2 pb-0 pr-0 pl-0">
                     <v-list-item>
-                      <v-col cols="12" md="1" class="pt-2 pb-0 pr-0 pl-0">
+                      <v-col cols="3" md="1" class="pt-1 pb-0 pr-0 pl-0 pr-0">
                         <div
                           class="pa-3 red rounded-circle d-inline-block"
                         ></div>
                       </v-col>
-                      <v-card-title class="red--text h2 pt-2 pb-0 pl-0">
+                      <v-card-title
+                        class="title-text red--text pt-1 pb-0 pr-0 pl-0 pr-0"
+                      >
                         {{ severityLevel }}
                       </v-card-title>
                     </v-list-item>
                   </v-list-item-content>
-
                   <v-card-title class="title-text pt-1">
                     {{ locationName }}
                   </v-card-title>
-                  <v-card-subtitle>
+                  <v-card-subtitle class="subtitle-text">
                     {{ situationTime }}
                   </v-card-subtitle>
                   <v-card-title class="title-text pt-1 pb-1">
@@ -49,6 +50,7 @@
                     <v-list-item-avatar
                       v-for="(image, index) in imageList"
                       :key="index"
+                      class="pr-2 pl-2"
                     >
                       <img :src="image.src" />
                     </v-list-item-avatar>
@@ -56,18 +58,23 @@
                   <v-card-title class="title-text pt-1 pb-1">
                     {{ missionParticipants }}
                   </v-card-title>
-                  <v-col class="watcher-image pt-1 pb-1">
+                  <v-col class="watcher-image">
                     <v-list-item-avatar
                       v-for="(image, index) in imageList"
                       :key="index"
                     >
-                      <img :src="image.src" />
+                      <img :src="image.src" class="" />
                     </v-list-item-avatar>
                   </v-col>
                   <v-row class="mt-1" style="padding: 3%">
                     <v-col cols="12" md="16" align="center">
                       <v-btn class="px-8 mx-10">
-                        <v-card-text style="font-weight: bold; font-size: 18"
+                        <v-card-text
+                          style="
+                            font-weight: bold;
+                            font-size: 1.2rem;
+                            font-family: 'Prompt';
+                          "
                           >กลับ</v-card-text
                         >
                       </v-btn>
@@ -120,10 +127,10 @@
                       <v-list-item-title class="h3 pt-1">
                         {{ text2 }}
                       </v-list-item-title>
-                      <v-list-item-title class="pt-1">
+                      <v-list-item-title class="title-text pt-1">
                         {{ locationName }}
                       </v-list-item-title>
-                      <v-list-item-subtitle class="pt-1">
+                      <v-list-item-subtitle class="subtitle-text pt-1">
                         {{ situationTime }}
                       </v-list-item-subtitle>
                     </v-list-item-content>
@@ -149,7 +156,7 @@
                             <v-card>
                               <v-card-title
                                 style="font-size: 16px; font-weight: bold"
-                                class="justify-center"
+                                class="justify-center title-text"
                               >
                                 {{ msg_dialog_trash }}
                               </v-card-title>
@@ -159,6 +166,7 @@
                                   color="green darken-1"
                                   text
                                   @click="dialog = false"
+                                  class="title-text"
                                 >
                                   {{ cancel }}
                                 </v-btn>
@@ -166,6 +174,7 @@
                                   color="green darken-1"
                                   text
                                   @click="dialog = false"
+                                  class="title-text"
                                 >
                                   {{ accept }}
                                 </v-btn>
@@ -248,6 +257,15 @@ export default {
         {
           src: 'https://cdn.vuetifyjs.com/images/john.jpg',
         },
+        {
+          src: 'https://cdn.vuetifyjs.com/images/john.jpg',
+        },
+        {
+          src: 'https://cdn.vuetifyjs.com/images/john.jpg',
+        },
+        {
+          src: 'https://cdn.vuetifyjs.com/images/john.jpg',
+        },
       ],
       notice: 'หมายเหตุ',
       markers: [
@@ -288,8 +306,18 @@ export default {
   color: #356859;
 }
 .title-text {
-  color: #000;
   font-weight: bold;
   font-size: 1.2rem;
+  font-family: 'Prompt';
+}
+.subtitle-text {
+  color: rgb(196, 196, 196);
+  font-weight: bold;
+  font-size: 1rem;
+  font-family: 'Prompt';
+}
+.mdc-typography-styles-headline1 {
+  font-family: 'Prompt';
+  font-size: 50;
 }
 </style>
