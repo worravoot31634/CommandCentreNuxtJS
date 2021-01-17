@@ -17,7 +17,7 @@ export default {
   css: ['@/assets/fonts/prompt.css', '@/assets/css/styles.css'],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: [],
+  plugins: ['~/plugins/tab-component.js'],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,
@@ -33,7 +33,6 @@ export default {
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
     'bootstrap-vue/nuxt',
-
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     [
@@ -63,10 +62,7 @@ export default {
       },
     ],
   ],
-  bootstrapVue: {
-    bootstrapCSS: false,
-    bootstrapVueCSS: false,
-  },
+
   styleResources: {
     scss: './scss/*.scss',
   },
