@@ -103,26 +103,60 @@ export default {
       return dateLocal
     },
     async initialize() {
-      const missionLocation = []
-      let situationTime = ''
-      await this.$fire.firestore
-        .collection('mission')
-        .orderBy('startTimeStamp')
-        .get()
-        .then(async (docs) => {
-          await docs.docs.forEach((value, index) => {
-            situationTime = value.data().startTimeStamp.toDate().getTime()
-            missionLocation.push({
-              locationName: value.data().locationName,
-              latitude: value.data().latLng.latitude,
-              longitude: value.data().latLng.longitude,
-              imgSrc: value.data().imgSrc,
-              situationTime: this.convertDateTime(situationTime),
+      // const missionLocation = []
+      try {
+        let situationTime = ''
+        await this.$fire.firestore
+          .collection('mission')
+          .where('missionStatus', '==', 0)
+          .onSnapshot((querySnapshot) => {
+            querySnapshot.docChanges().forEach((change) => {
+              const missionDocs = change.doc.data()
+              if (change.type === 'added') {
+                console.log('Added: ', change.doc.data())
+
+                situationTime = missionDocs.startTimeStamp.toDate().getTime()
+                this.locations.push({
+                  locationName: missionDocs.locationName,
+                  latitude: missionDocs.latLng.latitude,
+                  longitude: missionDocs.latLng.longitude,
+                  imgSrc: missionDocs.imgSrc,
+                  situationTime: this.convertDateTime(situationTime),
+                })
+              }
+
+              if (change.type === 'modified') {
+                console.log('Modified: ', change.doc.data())
+              }
+
+              if (change.type === 'removed') {
+                console.log('Removed: ', change.doc.data())
+                const indexChange = this.locations.findIndex(
+                  (loc) => loc.imgSrc === change.doc.data()
+                )
+                this.locations.splice(indexChange, 1)
+              }
             })
           })
+      } catch (error) {}
+      // await this.$fire.firestore
+      //   .collection('mission')
+      //   .orderBy('startTimeStamp')
+      //   .get()
+      //   .then(async (docs) => {
+      //     await docs.docs.forEach((value, index) => {
+      //       situationTime = value.data().startTimeStamp.toDate().getTime()
+      //       missionLocation.push({
+      //         locationName: value.data().locationName,
+      //         latitude: value.data().latLng.latitude,
+      //         longitude: value.data().latLng.longitude,
+      //         imgSrc: value.data().imgSrc,
+      //         situationTime: this.convertDateTime(situationTime),
+      //       })
+      //     })
 
-          this.locations = missionLocation
-        })
+      //     this.locations = missionLocation
+      //   })
     },
     getData(data) {
       console.log(data)
