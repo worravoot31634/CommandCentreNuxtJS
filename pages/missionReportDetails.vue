@@ -1,5 +1,12 @@
 <template>
   <v-card color="basil">
+    <v-overlay :value="isLoading" opacity="0.7">
+      <fulfilling-bouncing-circle-spinner
+        :animation-duration="4000"
+        :size="60"
+        color="#ff1d5e"
+      />
+    </v-overlay>
     <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
       <v-tab v-for="item in items" :key="item">
         <h1 class="mdc-typography-styles-headline1">{{ item }}</h1>
@@ -21,7 +28,8 @@
                       v-for="(item, i) in reportImages"
                       :key="i"
                       :src="item.img"
-                    ></v-carousel-item>
+                    >
+                    </v-carousel-item>
                   </v-carousel>
                   <v-list-item-content class="pt-2 pb-0 pr-0 pl-0">
                     <v-list-item>
@@ -55,20 +63,17 @@
                     {{ watcher }}
                   </v-card-title>
                   <v-col class="watcher-image pt-1 pb-1">
-                    <!-- <v-list-item-avatar
-                      v-for="(image, index) in imageList"
-                      :key="index"
-                      class="pr-2 pl-2"
-                    >
-                      <img :src="image.src" />
-                    </v-list-item-avatar> -->
                     <vs-avatar-group style="justify-content: left">
                       <vs-avatar
                         max="50"
                         v-for="(image, index) in imageList"
                         :key="index"
                       >
-                        <img :src="image.src" alt="" />
+                        <img
+                          :src="image.src"
+                          alt=""
+                          style="width: 35px; height: 35px"
+                        />
                       </vs-avatar>
                     </vs-avatar-group>
                   </v-col>
@@ -82,7 +87,11 @@
                         v-for="(image, index) in attendantImages"
                         :key="index"
                       >
-                        <img :src="image.imageSrc" alt="" />
+                        <img
+                          :src="image.imageSrc"
+                          alt=""
+                          style="width: 35px; height: 35px"
+                        />
                       </vs-avatar>
                     </vs-avatar-group>
                   </v-col>
@@ -253,7 +262,11 @@
 </template>
 
 <script>
+import { FulfillingBouncingCircleSpinner } from 'epic-spinners'
 export default {
+  components: {
+    FulfillingBouncingCircleSpinner,
+  },
   data() {
     return {
       dialog: false,
@@ -301,15 +314,18 @@ export default {
       ],
       missionId: '',
       missionInfo: [],
+      isLoading: true,
     }
   },
   mounted() {
+    this.missionId = localStorage.getItem('missionID')
+    console.log('missionId mssId ', this.missionId)
     this.getMissionById()
+    console.log('process.browser ', process.browser)
   },
   methods: {
     matchHeight() {
       console.log('params: ', this.missionId)
-      this.$store.dispatch('missionId')
     },
     async getMissionById() {
       try {
@@ -353,6 +369,7 @@ export default {
               this.getAttendantsInfo(docData.uid, (user) => {
                 this.attendantImages.push({ imageSrc: user.photoURL })
               })
+              this.isLoading = false
             }
 
             if (change.type === 'modified') {
@@ -367,6 +384,7 @@ export default {
                 const indexRemove = this.attendantImages.findIndex(
                   (att) => att.imageSrc === user.photoURL
                 )
+                this.isLoading = false
                 this.attendantImages.splice(indexRemove, 1)
               })
             }
@@ -394,9 +412,8 @@ export default {
     },
   },
   created() {
-    console.log(this.$route.query.mission)
-    this.missionId = this.$route.params.mission
-    console.log('mission ', this.missionId)
+    this.missionId = this.$route.query.mission
+    console.log('missionID Query ', this.missionId)
   },
 }
 </script>
@@ -427,5 +444,10 @@ export default {
 .mdc-typography-styles-headline1 {
   font-family: 'Prompt';
   font-size: 50;
+}
+.action-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

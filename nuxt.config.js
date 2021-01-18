@@ -14,7 +14,7 @@ export default {
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
-  css: ['~/assets/fonts/prompt.css', '~/assets/css/styles.css'],
+  css: ['~/assets/fonts/prompt', '~/assets/css/styles.css'],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [{ src: '~/plugins/googleMap', ssr: true }, '~/plugins/vuesax'],
@@ -33,6 +33,7 @@ export default {
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
     'bootstrap-vue/nuxt',
+    'nuxt-webfontloader',
 
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
@@ -67,6 +68,11 @@ export default {
     bootstrapCSS: false,
     bootstrapVueCSS: false,
   },
+  webfontloader: {
+    google: {
+      families: ['Prompt:400,500,700,900'],
+    },
+  },
   styleResources: {
     scss: './scss/*.scss',
   },
@@ -77,9 +83,12 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     treeShake: true,
+    defaultAssets: {
+      font: false,
+    },
     theme: {
       font: {
-        family: 'Prompt'
+        family: 'Prompt',
       },
       dark: false,
       themes: {
