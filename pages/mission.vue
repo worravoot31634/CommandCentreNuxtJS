@@ -102,6 +102,12 @@ export default {
   methods: {
     getIndex(index) {
       console.log('iondex is ' + index)
+      this.$router.push({
+        name: 'missionReportDetails',
+        params: {
+          mission: this.items[index].missionId,
+        },
+      })
     },
     async getMission() {
       try {
@@ -126,6 +132,10 @@ export default {
                   level: doc.severity !== 0 ? 'รุนแรงมาก' : 'รุนแรงน้อย',
                   locationName: doc.locationName,
                   reportTime: this.convertDateTime(reportTime),
+                  locations: {
+                    lat: doc.latLng.latitude,
+                    lng: doc.latLng.longitude,
+                  },
                 })
               }
               if (change.type === 'modified') {
@@ -137,6 +147,10 @@ export default {
                   level: doc.severity !== 0 ? 'รุนแรงมาก' : 'รุนแรงน้อย',
                   locationName: doc.locationName,
                   reportTime: this.convertDateTime(reportTime),
+                  locations: {
+                    lat: doc.latLng.latitude,
+                    lng: doc.latLng.longitude,
+                  },
                 }
                 const indexChange = this.items.findIndex(
                   (id) => id.missionId === editMission.missionId

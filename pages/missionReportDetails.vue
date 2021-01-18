@@ -18,53 +18,73 @@
                   </v-card-title>
                   <v-carousel hide-delimiters height="300" style="padding: 2%">
                     <v-carousel-item
-                      v-for="(item, i) in itemsImages"
+                      v-for="(item, i) in reportImages"
                       :key="i"
-                      :src="item.src"
+                      :src="item.img"
                     ></v-carousel-item>
                   </v-carousel>
                   <v-list-item-content class="pt-2 pb-0 pr-0 pl-0">
                     <v-list-item>
                       <v-col cols="3" md="1" class="pt-1 pb-0 pr-0 pl-0 pr-0">
                         <div
-                          class="pa-3 red rounded-circle d-inline-block"
+                          :class="
+                            'pa-3 ' +
+                            missionInfo.severityColor +
+                            ' rounded-circle d-inline-block'
+                          "
                         ></div>
                       </v-col>
                       <v-card-title
-                        class="title-text red--text pt-1 pb-0 pr-0 pl-0 pr-0"
+                        :class="
+                          'title-text px-0 py-0 ' +
+                          missionInfo.severityColor +
+                          '--text'
+                        "
                       >
-                        {{ severityLevel }}
+                        {{ missionInfo.severity }}
                       </v-card-title>
                     </v-list-item>
                   </v-list-item-content>
                   <v-card-title class="title-text pt-1">
-                    {{ locationName }}
+                    {{ missionInfo.locationName }}
                   </v-card-title>
                   <v-card-subtitle class="subtitle-text">
-                    {{ situationTime }}
+                    {{ missionInfo.startTimeStamp }}
                   </v-card-subtitle>
                   <v-card-title class="title-text pt-1 pb-1">
                     {{ watcher }}
                   </v-card-title>
                   <v-col class="watcher-image pt-1 pb-1">
-                    <v-list-item-avatar
+                    <!-- <v-list-item-avatar
                       v-for="(image, index) in imageList"
                       :key="index"
                       class="pr-2 pl-2"
                     >
                       <img :src="image.src" />
-                    </v-list-item-avatar>
+                    </v-list-item-avatar> -->
+                    <vs-avatar-group style="justify-content: left">
+                      <vs-avatar
+                        max="50"
+                        v-for="(image, index) in imageList"
+                        :key="index"
+                      >
+                        <img :src="image.src" alt="" />
+                      </vs-avatar>
+                    </vs-avatar-group>
                   </v-col>
                   <v-card-title class="title-text pt-1 pb-1">
                     {{ missionParticipants }}
                   </v-card-title>
                   <v-col class="watcher-image">
-                    <v-list-item-avatar
-                      v-for="(image, index) in imageList"
-                      :key="index"
-                    >
-                      <img :src="image.src" class="" />
-                    </v-list-item-avatar>
+                    <vs-avatar-group style="justify-content: left">
+                      <vs-avatar
+                        max="50"
+                        v-for="(image, index) in attendantImages"
+                        :key="index"
+                      >
+                        <img :src="image.imageSrc" alt="" />
+                      </vs-avatar>
+                    </vs-avatar-group>
                   </v-col>
                   <v-row class="mt-1" style="padding: 3%">
                     <v-col cols="12" md="16" align="center">
@@ -91,11 +111,29 @@
                   <v-list-item-content style="padding: 2%" height="100%">
                     <GmapMap
                       ref="mapRef"
-                      :center="{ lat: 10, lng: 10 }"
-                      :zoom="7"
+                      :center="{ lat: 14.4386654, lng: 101.3722428 }"
+                      :zoom="9"
                       map-type-id="terrain"
                       style="width: 500px; height: 650px"
-                    />
+                      :options="{
+                        zoomControl: true,
+                        mapTypeControl: false,
+                        scaleControl: false,
+                        streetViewControl: false,
+                        rotateControl: false,
+                        fullscreenControl: true,
+                        disableDefaultUi: false,
+                      }"
+                    >
+                      <GmapMarker
+                        :ref="`marker`"
+                        :position="markers.position"
+                        :icon="{
+                          url: require('../assets/images/marker.svg'),
+                          scaledSize: { width: 80, height: 80 },
+                        }"
+                      ></GmapMarker>
+                    </GmapMap>
                   </v-list-item-content>
                 </v-card>
               </v-col>
@@ -228,25 +266,13 @@ export default {
       imgElephant: 'ภาพเหตุการณ์',
       sceneOfaccident: 'จุดเกิดเหตุ',
       msg_dialog_trash: 'ท่านต้องการย้ายการแจ้งเตือนไปที่ถังขยะหรือไม่',
-      itemsImages: [
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg',
-        },
-      ],
+      reportImages: [],
       severityLevel: 'รุนแรงมาก',
       locationName: 'หมู่บ้านเขาใหญ่',
       situationTime: '30 กันยายน 2020 Time 15:52',
       watcher: 'ผู้พบเห็น',
       missionParticipants: 'ผู้เข้าร่วมภารกิจ',
+      attendantImages: [],
       imageList: [
         {
           src: 'https://cdn.vuetifyjs.com/images/john.jpg',
@@ -273,22 +299,104 @@ export default {
           position: { lat: 10, lng: 10 },
         },
       ],
+      missionId: '',
+      missionInfo: [],
     }
   },
   mounted() {
-    this.matchHeight()
-    this.initGoogleMap()
+    this.getMissionById()
   },
   methods: {
     matchHeight() {
-      // const height = this.$refs.reportInfo.clientHeight
-      // console.log(height)
+      console.log('params: ', this.missionId)
+      this.$store.dispatch('missionId')
     },
-    initGoogleMap() {
-      // this.$refs.mapRef.$mapPromise.then((map) => {
-      //   map.panTo({ lat: 1.38, lng: 103.8 })
-      // })
+    async getMissionById() {
+      try {
+        await this.$fire.firestore
+          .collection('mission')
+          .where('missionId', '==', this.missionId)
+          .get()
+          .then((doc) => {
+            doc.docs.forEach((e) => {
+              this.missionInfo = e.data()
+              const timestamp = e.data().startTimeStamp.toDate().getTime()
+              this.missionInfo.startTimeStamp = this.convertDateTime(timestamp)
+              this.missionInfo.severity =
+                e.data().severity === 1 ? 'รุนแรงมาก' : 'รุนแรงน้อย'
+              this.missionInfo.severityColor =
+                e.data().severity === 1 ? 'red' : 'orange'
+            })
+
+            this.markers.position = {
+              lat: this.missionInfo.latLng.latitude,
+              lng: this.missionInfo.latLng.longitude,
+            }
+            this.reportImages.push({ img: this.missionInfo.imgSrc })
+
+            this.getAttendants(this.missionInfo.missionId)
+          })
+      } catch (error) {}
     },
+    async getAttendants(missionId) {
+      console.log('MissionID: ', missionId)
+      await this.$fire.firestore
+        .collection('mission')
+        .doc(missionId)
+        .collection('attendants')
+        .onSnapshot((querySnapshot) => {
+          querySnapshot.docChanges().forEach((change) => {
+            const docData = change.doc.data()
+
+            if (change.type === 'added') {
+              console.log('Added: ', change.doc.data())
+              this.getAttendantsInfo(docData.uid, (user) => {
+                this.attendantImages.push({ imageSrc: user.photoURL })
+              })
+            }
+
+            if (change.type === 'modified') {
+              console.log('Modified: ', change.doc.data())
+            }
+
+            if (change.type === 'removed') {
+              console.log('Removed: ', change.doc.data())
+              const dataRemoving = change.doc.data()
+
+              this.getAttendantsInfo(dataRemoving.uid, (user) => {
+                const indexRemove = this.attendantImages.findIndex(
+                  (att) => att.imageSrc === user.photoURL
+                )
+                this.attendantImages.splice(indexRemove, 1)
+              })
+            }
+          })
+        })
+    },
+    async getAttendantsInfo(documentRef, callback) {
+      try {
+        await documentRef.get().then((e) => {
+          callback(e.data())
+        })
+      } catch (error) {}
+    },
+    convertDateTime(microsecond) {
+      const date = new Date(microsecond)
+      const dateLocal = date.toLocaleDateString('th-TH', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+
+      return dateLocal
+    },
+  },
+  created() {
+    console.log(this.$route.query.mission)
+    this.missionId = this.$route.params.mission
+    console.log('mission ', this.missionId)
   },
 }
 </script>
