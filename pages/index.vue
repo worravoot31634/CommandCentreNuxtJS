@@ -41,14 +41,22 @@
             class="align-content-center"
           />
           <v-list-item class="px-0 py-0" min-height="0">
-            <div class="pa-2 red rounded-circle d-inline-block"></div>
-            <v-card-title class="pt-0 pb-0 px-1 red--text subtitle-1">
-              รุนแรงมาก
+            <div
+              :class="
+                'pa-2 ' + m.severityColor + ' rounded-circle d-inline-block'
+              "
+            ></div>
+            <v-card-title
+              :class="'pt-0 pb-0 px-1 ' + m.severityColor + '--text subtitle-1'"
+            >
+              {{ m.severity }}
             </v-card-title>
           </v-list-item>
           <v-list-item-group>
-            <v-card-title class="px-0 py-0">{{ m.locationName }}</v-card-title>
-            <v-card-subtitle class="pt-3 px-0">{{
+            <v-card-title class="px-0 py-0" style="font-family: Prompt">{{
+              m.locationName
+            }}</v-card-title>
+            <v-card-subtitle class="pt-3 px-0" style="font-family: Prompt">{{
               m.situationTime
             }}</v-card-subtitle>
           </v-list-item-group>
@@ -56,7 +64,6 @@
       </GmapMarker>
       />
     </GmapMap>
-    {{ content }}
   </div>
 </template>
 
@@ -120,6 +127,9 @@ export default {
                   latitude: missionDocs.latLng.latitude,
                   longitude: missionDocs.latLng.longitude,
                   imgSrc: missionDocs.imgSrc,
+                  severity:
+                    missionDocs.severity !== 0 ? 'รุนแรงมาก' : 'รุนแรงน้อย',
+                  severityColor: missionDocs.severity !== 0 ? 'red' : 'orange',
                   situationTime: this.convertDateTime(situationTime),
                 })
               }

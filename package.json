@@ -30,6 +30,7 @@
     "moment": "^2.29.1",
     "nuxt": "^2.14.6",
     "nuxt-gmaps": "^1.2.10",
+    "nuxt-webfontloader": "^1.1.0",
     "vue": "^2.6.12",
     "vue-chartjs": "^3.5.1",
     "vue2-google-maps": "^0.10.7",

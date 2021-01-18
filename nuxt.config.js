@@ -10,14 +10,7 @@ export default {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
     ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      {
-        rel: 'stylesheet',
-        href:
-          'https://fonts.googleapis.com/css?family=Oswald|Libre+Baskerville&display=swap',
-      },
-    ],
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
@@ -40,6 +33,7 @@ export default {
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
     'bootstrap-vue/nuxt',
+    'nuxt-webfontloader',
 
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
@@ -74,6 +68,11 @@ export default {
     bootstrapCSS: false,
     bootstrapVueCSS: false,
   },
+  webfontloader: {
+    google: {
+      families: ['Prompt:400,500,700,900'],
+    },
+  },
   styleResources: {
     scss: './scss/*.scss',
   },
@@ -84,6 +83,9 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     treeShake: true,
+    defaultAssets: {
+      font: false,
+    },
     theme: {
       font: {
         family: 'Prompt',
