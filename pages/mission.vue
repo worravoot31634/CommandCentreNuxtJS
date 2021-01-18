@@ -149,17 +149,6 @@ export default {
               if (change.type === 'removed') {
                 console.log('Removed: ', change.doc.data())
               }
-
-              console.log(editMission)
-              //  const reportTime = doc.data().startTimeStamp.toDate().getTime()
-
-              // const editMission = doc.data()
-              // const indexChange = this.items.findIndex(
-              //   (id) => id.missionId === editMission.missionId
-              // )
-              // this.$set(this.items, indexChange, editMission)
-
-              //  this.items = missionList
             })
           })
       } catch (e) {}
