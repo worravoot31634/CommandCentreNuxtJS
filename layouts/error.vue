@@ -1,20 +1,5 @@
 <template>
   <v-app>
-    <!-- <h1 v-if="error.statusCode === 404">
-      {{ pageNotFound }}
-    </h1>
-    <h1 v-else>
-      {{ otherError }}
-    </h1>
-    <NuxtLink to="/"> Home page </NuxtLink> -->
-
-    <!-- <v-container v-if="error.statusCode === 404">
-      <v-row>
-        <v-col>
-          <v-img src="../assets/images/marker.svg" />
-        </v-col>
-      </v-row>
-    </v-container> -->
     <v-container fluid>
       <v-row>
         <v-col cols="12" class="action-center">

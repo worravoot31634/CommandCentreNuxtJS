@@ -101,11 +101,9 @@ export default {
   },
   methods: {
     getIndex(index) {
-      console.log('iondex is ' + index)
-      localStorage.setItem('missionID', this.items[index].missionId)
       this.$router.push({
-        name: 'missionReportDetails',
-        params: {
+        path: 'missionReportDetails',
+        query: {
           mission: this.items[index].missionId,
         },
       })

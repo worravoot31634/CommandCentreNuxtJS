@@ -1,5 +1,12 @@
 <template>
   <div style="height: 100%">
+    <v-overlay :value="isLoading" opacity="0.7">
+      <fulfilling-bouncing-circle-spinner
+        :animation-duration="4000"
+        :size="60"
+        color="#ff1d5e"
+      />
+    </v-overlay>
     <GmapMap
       ref="mapRef"
       :center="{ lat: 14.4386654, lng: 101.3722428 }"
@@ -69,17 +76,18 @@
 
 <script>
 import { gmapApi } from 'vue2-google-maps'
+import { FulfillingBouncingCircleSpinner } from 'epic-spinners'
 export default {
+  components: {
+    FulfillingBouncingCircleSpinner,
+  },
   data() {
     return {
       currentLocation: {},
       marker: undefined,
       situationTime: '30 กันยายน 2020 Time 15:52',
       i: 0,
-      isLoading: false,
       locations: [],
-      infoOpened: true,
-      infoCurrentKey: null,
       infoOptions: {
         pixelOffset: {
           width: 0,
@@ -87,6 +95,7 @@ export default {
         },
       },
       content: '',
+      isLoading: true,
     }
   },
   computed: {
@@ -132,6 +141,8 @@ export default {
                   severityColor: missionDocs.severity !== 0 ? 'red' : 'orange',
                   situationTime: this.convertDateTime(situationTime),
                 })
+
+                this.isLoading = false
               }
 
               if (change.type === 'modified') {
@@ -144,6 +155,7 @@ export default {
                   (loc) => loc.imgSrc === change.doc.data()
                 )
                 this.locations.splice(indexChange, 1)
+                this.isLoading = false
               }
             })
           })
