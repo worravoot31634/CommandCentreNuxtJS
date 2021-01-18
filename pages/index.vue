@@ -103,7 +103,6 @@ export default {
       return dateLocal
     },
     async initialize() {
-      // const missionLocation = []
       try {
         let situationTime = ''
         await this.$fire.firestore
@@ -139,24 +138,6 @@ export default {
             })
           })
       } catch (error) {}
-      // await this.$fire.firestore
-      //   .collection('mission')
-      //   .orderBy('startTimeStamp')
-      //   .get()
-      //   .then(async (docs) => {
-      //     await docs.docs.forEach((value, index) => {
-      //       situationTime = value.data().startTimeStamp.toDate().getTime()
-      //       missionLocation.push({
-      //         locationName: value.data().locationName,
-      //         latitude: value.data().latLng.latitude,
-      //         longitude: value.data().latLng.longitude,
-      //         imgSrc: value.data().imgSrc,
-      //         situationTime: this.convertDateTime(situationTime),
-      //       })
-      //     })
-
-      //     this.locations = missionLocation
-      //   })
     },
     getData(data) {
       console.log(data)
