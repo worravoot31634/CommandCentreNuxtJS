@@ -34,6 +34,7 @@
     "vue-chartjs": "^3.5.1",
     "vue2-google-maps": "^0.10.7",
     "vuesax": "^4.0.1-alpha.25",
+    "vuex-persistedstate": "^4.0.0-beta.3",
     "yarn": "^1.22.10"
   },
   "devDependencies": {

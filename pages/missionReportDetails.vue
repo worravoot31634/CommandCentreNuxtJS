@@ -55,13 +55,6 @@
                     {{ watcher }}
                   </v-card-title>
                   <v-col class="watcher-image pt-1 pb-1">
-                    <!-- <v-list-item-avatar
-                      v-for="(image, index) in imageList"
-                      :key="index"
-                      class="pr-2 pl-2"
-                    >
-                      <img :src="image.src" />
-                    </v-list-item-avatar> -->
                     <vs-avatar-group style="justify-content: left">
                       <vs-avatar
                         max="50"
@@ -304,12 +297,14 @@ export default {
     }
   },
   mounted() {
+    this.missionId = localStorage.getItem('missionID')
+    console.log('missionId mssId ', this.missionId)
     this.getMissionById()
+    console.log('process.browser ', process.browser)
   },
   methods: {
     matchHeight() {
       console.log('params: ', this.missionId)
-      this.$store.dispatch('missionId')
     },
     async getMissionById() {
       try {
@@ -397,6 +392,7 @@ export default {
     console.log(this.$route.query.mission)
     this.missionId = this.$route.params.mission
     console.log('mission ', this.missionId)
+    this.$options.missionID = this.missionId
   },
 }
 </script>

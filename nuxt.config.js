@@ -10,11 +10,18 @@ export default {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      {
+        rel: 'stylesheet',
+        href:
+          'https://fonts.googleapis.com/css?family=Oswald|Libre+Baskerville&display=swap',
+      },
+    ],
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
-  css: ['~/assets/fonts/prompt.css', '~/assets/css/styles.css'],
+  css: ['~/assets/fonts/prompt', '~/assets/css/styles.css'],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [{ src: '~/plugins/googleMap', ssr: true }, '~/plugins/vuesax'],
@@ -79,7 +86,7 @@ export default {
     treeShake: true,
     theme: {
       font: {
-        family: 'Prompt'
+        family: 'Prompt',
       },
       dark: false,
       themes: {
