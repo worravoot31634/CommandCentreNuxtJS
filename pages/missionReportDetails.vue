@@ -1,12 +1,5 @@
 <template>
   <v-card color="basil">
-    <v-overlay :value="isLoading" opacity="0.7">
-      <fulfilling-bouncing-circle-spinner
-        :animation-duration="4000"
-        :size="60"
-        color="#ff1d5e"
-      />
-    </v-overlay>
     <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
       <v-tab v-for="item in items" :key="item">
         <h1 class="mdc-typography-styles-headline1">{{ item }}</h1>
@@ -137,6 +130,7 @@
                       <GmapMarker
                         :ref="`marker`"
                         :position="markers.position"
+                        type="module"
                         :icon="{
                           url: require('../assets/images/marker.svg'),
                           scaledSize: { width: 80, height: 80 },
@@ -262,11 +256,8 @@
 </template>
 
 <script>
-import { FulfillingBouncingCircleSpinner } from 'epic-spinners'
 export default {
-  components: {
-    FulfillingBouncingCircleSpinner,
-  },
+  components: {},
   data() {
     return {
       dialog: false,
@@ -318,7 +309,6 @@ export default {
     }
   },
   mounted() {
-    this.missionId = localStorage.getItem('missionID')
     console.log('missionId mssId ', this.missionId)
     this.getMissionById()
     console.log('process.browser ', process.browser)
@@ -350,6 +340,10 @@ export default {
             }
             this.reportImages.push({ img: this.missionInfo.imgSrc })
 
+            console.log(
+              'this.missionInfo.missionId ',
+              this.missionInfo.missionId
+            )
             this.getAttendants(this.missionInfo.missionId)
           })
       } catch (error) {}
@@ -363,7 +357,7 @@ export default {
         .onSnapshot((querySnapshot) => {
           querySnapshot.docChanges().forEach((change) => {
             const docData = change.doc.data()
-
+            console.log('docData: ', docData)
             if (change.type === 'added') {
               console.log('Added: ', change.doc.data())
               this.getAttendantsInfo(docData.uid, (user) => {
@@ -388,6 +382,8 @@ export default {
                 this.attendantImages.splice(indexRemove, 1)
               })
             }
+
+            console.log('Attendant Images: ', this.attendantImages)
           })
         })
     },

@@ -1,12 +1,5 @@
 <template>
   <div style="height: 100%">
-    <v-overlay :value="isLoading" opacity="0.7">
-      <fulfilling-bouncing-circle-spinner
-        :animation-duration="4000"
-        :size="60"
-        color="#ff1d5e"
-      />
-    </v-overlay>
     <GmapMap
       ref="mapRef"
       :center="{ lat: 14.4386654, lng: 101.3722428 }"
@@ -36,8 +29,6 @@
         <gmap-info-window
           :options="infoOptions"
           :position="{ lat: m.latitude, lng: m.longitude }"
-          :opened="infoOpened"
-          :content="content"
           @closeclick="false"
         >
           <v-img
@@ -76,11 +67,8 @@
 
 <script>
 import { gmapApi } from 'vue2-google-maps'
-import { FulfillingBouncingCircleSpinner } from 'epic-spinners'
 export default {
-  components: {
-    FulfillingBouncingCircleSpinner,
-  },
+  components: {},
   data() {
     return {
       currentLocation: {},
