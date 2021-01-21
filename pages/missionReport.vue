@@ -3,7 +3,7 @@
     <v-card style="margin: 2%">
       <v-row>
         <!-- icon and caption -->
-        <v-col cols="12" md="8" class="px-0" no-gutters>
+        <v-col cols="12" md="7" class="px-0" no-gutters>
           <v-list-item>
             <v-icon>mdi-filter-variant-plus</v-icon>
             <v-card-title class="subtitle-1"> เลือกช่วงเวลา </v-card-title>
@@ -43,7 +43,7 @@
         <!-- end date picker col -->
 
         <!-- severity col -->
-        <v-col cols="12" md="4" no-gutters>
+        <v-col cols="12" md="5" no-gutters>
           <v-list-item>
             <v-card-title class="subtitle-1"> ความรุนแรง </v-card-title>
             <!-- select severity -->
@@ -75,7 +75,7 @@
                   </v-card-subtitle>
                 </v-list-item-group>
               </v-list-item>
-              <v-list-item>
+              <v-list-item-group>
                 <!-- chart -->
                 <div class="small">
                   <line-chart
@@ -84,7 +84,7 @@
                   ></line-chart>
                 </div>
                 <!-- end chart -->
-                <v-list-item-group>
+                <v-list-item>
                   <v-col>
                     <v-card-title class="headline">
                       ภารกิจทั้งหมด
@@ -101,8 +101,8 @@
                       4.25 ครั้ง
                     </v-card-subtitle>
                   </v-col>
-                </v-list-item-group>
-              </v-list-item>
+                </v-list-item>
+              </v-list-item-group>
             </v-card>
           </v-col>
           <v-col no-gutters id="infoCard">
@@ -114,11 +114,12 @@
               <v-list-item-content style="align-items: center; padding: 2%">
                 <GmapMap
                   ref="mapRef"
-                  :center="{ lat: 10, lng: 10 }"
-                  :zoom="7"
+                  :center="{ lat: 14.5347161, lng: 101.3934069 }"
+                  :zoom="9"
                   map-type-id="terrain"
                   style="width: 90%; height: 600px"
-                />
+                >
+                </GmapMap>
               </v-list-item-content>
             </v-card>
           </v-col>
@@ -169,10 +170,10 @@
   </v-container>
 </template>
 <script>
+import { gmapApi } from 'vue2-google-maps'
 import moment from 'moment'
 import { format, parseISO } from 'date-fns'
 import LineChart from '../plugins/chart'
-
 moment.locale('th')
 export default {
   components: {
@@ -195,7 +196,7 @@ export default {
       },
     ],
     items: [...Array(4)].map((_, i) => `Item ${i}`),
-    datacollection: null,
+    datacollection: [],
     options: {
       scales: {
         xAxes: [
@@ -215,8 +216,17 @@ export default {
       maintainAspectRatio: false,
     },
     heightInforCard: 0,
+    points: [
+      { lat: 14.8818, lng: 102.0207 },
+      { lat: 14.7219433, lng: 101.5582061 },
+      { lat: 14.5331626, lng: 101.3669243 },
+      { lat: 14.5309514, lng: 101.3671139 },
+      { lat: 14.5279144, lng: 101.3692732 },
+      { lat: 14.5366533, lng: 101.3676692 },
+    ],
   }),
   computed: {
+    google: gmapApi,
     computedStartDateFormatted() {
       console.log('startDate before convert: ' + this.startDate)
       return this.startDate ? moment(this.startDate).format('Do MMMM YYYY') : ''
@@ -228,17 +238,49 @@ export default {
   },
   mounted() {
     this.fillData()
-    this.getHeightElement()
+    this.pointHeatMap()
   },
   methods: {
+    pointHeatMap() {
+      try {
+        this.$nextTick(() => {
+          this.$refs.mapRef.$mapPromise.then(() => {
+            const latlon = new this.google.maps.MVCArray()
+            this.points.forEach((value) => {
+              latlon.push(new this.google.maps.LatLng(value.lat, value.lng))
+            })
+            const x = new this.google.maps.visualization.HeatmapLayer({
+              data: latlon,
+              map: this.$refs.mapRef.$mapObject,
+            })
+            console.log(x)
+          })
+        })
+      } catch (error) {
+        console.log('Heat Map Error: ', error)
+      }
+    },
     fillData() {
       this.datacollection = {
-        labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        labels: [
+          'ม.ค.',
+          'ก.พ.',
+          'มี.ค.',
+          'เม.ย',
+          'พ.ค.',
+          'มิ.ย.',
+          'ก.ค.',
+          'ส.ค.',
+          'ก.ย.',
+          'ต.ค.',
+          'พ.ย.',
+          'ธ.ค.',
+        ],
         datasets: [
           {
             label: 'อัตราการแจ้งเตือน',
             backgroundColor: '#475520',
-            data: [5, 3, 2, 4, 8, 7, 9],
+            data: [5, 3, 2, 4, 8, 7, 9, 9, 9, 9, 9, 9],
           },
         ],
       }

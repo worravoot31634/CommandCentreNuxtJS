@@ -1,12 +1,5 @@
 <template>
   <div style="height: 100%">
-    <v-overlay :value="isLoading" opacity="0.7">
-      <fulfilling-bouncing-circle-spinner
-        :animation-duration="4000"
-        :size="60"
-        color="#ff1d5e"
-      />
-    </v-overlay>
     <GmapMap
       ref="mapRef"
       :center="{ lat: 14.4386654, lng: 101.3722428 }"
@@ -36,8 +29,6 @@
         <gmap-info-window
           :options="infoOptions"
           :position="{ lat: m.latitude, lng: m.longitude }"
-          :opened="infoOpened"
-          :content="content"
           @closeclick="false"
         >
           <v-img
@@ -76,11 +67,8 @@
 
 <script>
 import { gmapApi } from 'vue2-google-maps'
-import { FulfillingBouncingCircleSpinner } from 'epic-spinners'
 export default {
-  components: {
-    FulfillingBouncingCircleSpinner,
-  },
+  components: {},
   data() {
     return {
       currentLocation: {},
@@ -102,7 +90,7 @@ export default {
     google: gmapApi,
   },
   mounted() {
-    this.initialize()
+    this.getMission()
   },
   created() {},
   methods: {
@@ -118,7 +106,7 @@ export default {
 
       return dateLocal
     },
-    async initialize() {
+    async getMission() {
       try {
         let situationTime = ''
         await this.$fire.firestore
@@ -127,9 +115,9 @@ export default {
           .onSnapshot((querySnapshot) => {
             querySnapshot.docChanges().forEach((change) => {
               const missionDocs = change.doc.data()
+              console.log(change.doc.data())
               if (change.type === 'added') {
                 console.log('Added: ', change.doc.data())
-
                 situationTime = missionDocs.startTimeStamp.toDate().getTime()
                 this.locations.push({
                   locationName: missionDocs.locationName,
@@ -152,17 +140,17 @@ export default {
               if (change.type === 'removed') {
                 console.log('Removed: ', change.doc.data())
                 const indexChange = this.locations.findIndex(
-                  (loc) => loc.imgSrc === change.doc.data()
+                  (loc) => loc.imgSrc === change.doc.data().imgSrc
                 )
+                console.log('Index Change ', indexChange)
                 this.locations.splice(indexChange, 1)
                 this.isLoading = false
               }
             })
           })
-      } catch (error) {}
-    },
-    getData(data) {
-      console.log(data)
+      } catch (error) {
+        console.log('Error Get Mission Info: ', error)
+      }
     },
   },
 }
@@ -178,12 +166,6 @@ p {
   height: 100%;
   position: absolute;
 }
-/* .theme--light.v-application {
-  background-color: #68783c;
-} */
-/* .navTitle {
-  height: 64px;
-} */
 .vue-map-container .gm-ui-hover-effect {
   display: none !important;
 }

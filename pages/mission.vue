@@ -101,6 +101,7 @@ export default {
   },
   methods: {
     getIndex(index) {
+      console.log('this.items[index].missionId ', this.items[index].missionId)
       this.$router.push({
         path: 'missionReportDetails',
         query: {
