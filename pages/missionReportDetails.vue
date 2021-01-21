@@ -339,53 +339,51 @@ export default {
               lng: this.missionInfo.latLng.longitude,
             }
             this.reportImages.push({ img: this.missionInfo.imgSrc })
-
-            console.log(
-              'this.missionInfo.missionId ',
-              this.missionInfo.missionId
-            )
             this.getAttendants(this.missionInfo.missionId)
           })
-      } catch (error) {}
+      } catch (error) {
+        console.log('Error Get Mission: ', error)
+      }
     },
     async getAttendants(missionId) {
-      console.log('MissionID: ', missionId)
-      await this.$fire.firestore
-        .collection('mission')
-        .doc(missionId)
-        .collection('attendants')
-        .onSnapshot((querySnapshot) => {
-          querySnapshot.docChanges().forEach((change) => {
-            const docData = change.doc.data()
-            console.log('docData: ', docData)
-            if (change.type === 'added') {
-              console.log('Added: ', change.doc.data())
-              this.getAttendantsInfo(docData.uid, (user) => {
-                this.attendantImages.push({ imageSrc: user.photoURL })
-              })
-              this.isLoading = false
-            }
+      try {
+        await this.$fire.firestore
+          .collection('mission')
+          .doc(missionId)
+          .collection('attendants')
+          .onSnapshot((querySnapshot) => {
+            querySnapshot.docChanges().forEach((change) => {
+              const docData = change.doc.data()
 
-            if (change.type === 'modified') {
-              console.log('Modified: ', change.doc.data())
-            }
-
-            if (change.type === 'removed') {
-              console.log('Removed: ', change.doc.data())
-              const dataRemoving = change.doc.data()
-
-              this.getAttendantsInfo(dataRemoving.uid, (user) => {
-                const indexRemove = this.attendantImages.findIndex(
-                  (att) => att.imageSrc === user.photoURL
-                )
+              if (change.type === 'added') {
+                console.log('Added: ', change.doc.data())
+                this.getAttendantsInfo(docData.uid, (user) => {
+                  this.attendantImages.push({ imageSrc: user.photoURL })
+                })
                 this.isLoading = false
-                this.attendantImages.splice(indexRemove, 1)
-              })
-            }
+              }
 
-            console.log('Attendant Images: ', this.attendantImages)
+              if (change.type === 'modified') {
+                console.log('Modified: ', change.doc.data())
+              }
+
+              if (change.type === 'removed') {
+                console.log('Removed: ', change.doc.data())
+                const dataRemoving = change.doc.data()
+
+                this.getAttendantsInfo(dataRemoving.uid, (user) => {
+                  const indexRemove = this.attendantImages.findIndex(
+                    (att) => att.imageSrc === user.photoURL
+                  )
+                  this.isLoading = false
+                  this.attendantImages.splice(indexRemove, 1)
+                })
+              }
+            })
           })
-        })
+      } catch (error) {
+        console.log('Error Get Attendats Info: ', error)
+      }
     },
     async getAttendantsInfo(documentRef, callback) {
       try {
@@ -395,16 +393,20 @@ export default {
       } catch (error) {}
     },
     convertDateTime(microsecond) {
-      const date = new Date(microsecond)
-      const dateLocal = date.toLocaleDateString('th-TH', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      })
+      try {
+        const date = new Date(microsecond)
+        const dateLocal = date.toLocaleDateString('th-TH', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
 
-      return dateLocal
+        return dateLocal
+      } catch (error) {
+        console.log('Error convert date time: ', error)
+      }
     },
   },
   created() {
