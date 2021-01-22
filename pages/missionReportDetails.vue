@@ -1,5 +1,8 @@
 <template>
   <v-card color="basil">
+    <v-overlay :value="isLoading" opacity="0.7">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
     <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
       <v-tab v-for="item in items" :key="item">
         <h1 class="mdc-typography-styles-headline1">{{ item }}</h1>
@@ -91,14 +94,12 @@
                   <v-row class="mt-1" style="padding: 3%">
                     <v-col cols="12" md="16" align="center">
                       <v-btn class="px-8 mx-10">
-                        <v-card-text
-                          style="
-                            font-weight: bold;
-                            font-size: 1.2rem;
-                            font-family: 'Prompt';
-                          "
-                          >กลับ</v-card-text
-                        >
+                        <router-link
+                          to="/mission"
+                          class="black--text h6"
+                          style="text-decoration: none"
+                          >กลับ
+                        </router-link>
                       </v-btn>
                     </v-col>
                   </v-row>
@@ -145,12 +146,15 @@
         </v-card>
       </v-tab-item>
       <v-tab-item>
+        <v-overlay :value="isRemoveLoading" opacity="0.7">
+          <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
         <v-card color="basil" flat>
           <v-card-title class="title-text">{{ sceneOfaccident }}</v-card-title>
           <v-card
             class="mb-5"
-            :key="index"
-            v-for="(report, index) in reportsList"
+            :key="indexReport"
+            v-for="(report, indexReport) in reportsList"
             height="15%"
           >
             <v-container>
@@ -182,7 +186,13 @@
                       <v-row class="h3 pt-1 title-text">
                         <v-col cols="8" md="4">{{ notice }}</v-col>
                         <v-col cols="4" md="8" class="text-right">
-                          <v-dialog v-model="dialog" persistent max-width="400">
+                          <v-dialog
+                            v-model="dialog['dialog_' + indexReport]"
+                            value="false"
+                            persistent
+                            max-width="400"
+                            :retain-focus="false"
+                          >
                             <template v-slot:activator="{ on, attrs }">
                               <v-btn
                                 style="margin: 1%"
@@ -205,16 +215,18 @@
                                 <v-btn
                                   color="green darken-1"
                                   text
-                                  @click="dialog = false"
                                   class="title-text"
+                                  @click="
+                                    dialog['dialog_' + indexReport] = false
+                                  "
                                 >
                                   {{ cancel }}
                                 </v-btn>
                                 <v-btn
                                   color="green darken-1"
                                   text
-                                  @click="dialog = false"
                                   class="title-text"
+                                  @click="deleteReportMission(indexReport)"
                                 >
                                   {{ accept }}
                                 </v-btn>
@@ -253,13 +265,12 @@ export default {
   components: {},
   data() {
     return {
-      dialog: false,
+      dialog: [],
+      isLoadingA: true,
       tab: null,
       accept: 'ตกลง',
       cancel: 'ยกเลิก',
       items: ['รายละเอียดการแจ้งเตือน', 'รายงานการแจ้งเตือน'],
-      text: ['Jame', 'Logan'],
-      text2: 'Suranaree University Of Technology',
       imgElephant: 'ภาพเหตุการณ์',
       sceneOfaccident: 'จุดเกิดเหตุ',
       msg_dialog_trash: 'ท่านต้องการย้ายการแจ้งเตือนไปที่ถังขยะหรือไม่',
@@ -280,7 +291,9 @@ export default {
       missionId: '',
       missionInfo: [],
       reportsList: [],
+      isshowDialog: true,
       isLoading: true,
+      isRemoveLoading: false,
     }
   },
   mounted() {
@@ -324,46 +337,107 @@ export default {
     async getReportOfMission(missionId) {
       try {
         console.log('missionID Report: ', missionId)
+        // const newDocData = []
+
         await this.$fire.firestore
           .collection('reports')
           .where('missionId', '==', missionId)
-          .get()
-          .then((docs) => {
-            console.log('Docs report :', docs)
-            docs.forEach((doc) => {
-              console.log('Doc data ', doc.data())
+          .onSnapshot((querySnapshot) => {
+            querySnapshot.docChanges().forEach((change) => {
+              const docData = change.doc.data()
 
-              const indexImgReport = this.reportImages.findIndex(
-                (img) => img.imgSrc === doc.data().imgSrc
-              )
+              if (change.type === 'added') {
+                console.log('Added: ', change.doc.data())
 
-              if (indexImgReport === -1) {
-                this.reportImages.push({ imgSrc: doc.data().imgSrc })
-              }
-
-              this.getUserReport(doc.data().accountId, (eUser) => {
-                const indexUserReport = this.imageList.findIndex(
-                  (img) => img.imgSrc === eUser.photoURL
+                const indexImgReport = this.reportImages.findIndex(
+                  (img) => img.imgSrc === docData.imgSrc
                 )
 
-                if (indexUserReport === -1) {
-                  this.imageList.push({
-                    imgSrc: eUser.photoURL,
-                  })
+                if (indexImgReport === -1) {
+                  console.log(docData.imgSrc)
+                  this.reportImages.push({ imgSrc: docData.imgSrc })
                 }
+                console.log('Report Images: ', this.reportImages)
 
-                this.reportsList.push({
-                  locationName: doc.data().locationName,
-                  imgSrc: doc.data().imgSrc,
-                  detail: doc.data().reportDetails,
-                  timeStamp: this.convertDateTime(doc.data().timeStamp.seconds),
-                  photoURL: eUser.photoURL,
-                  displayName: eUser.displayName,
+                this.getUserReport(docData.accountId, (eUser) => {
+                  const indexUserReport = this.imageList.findIndex(
+                    (img) => img.imgSrc === eUser.photoURL
+                  )
+
+                  if (indexUserReport === -1) {
+                    this.imageList.push({
+                      imgSrc: eUser.photoURL,
+                    })
+                  }
+
+                  this.reportsList.push({
+                    reportId: docData.reportId,
+                    missionId: docData.missionId,
+                    locationName: docData.locationName,
+                    imgSrc: docData.imgSrc,
+                    detail: docData.reportDetails,
+                    timeStamp: this.convertDateTime(docData.timeStamp.seconds),
+                    photoURL: eUser.photoURL,
+                    displayName: eUser.displayName,
+                  })
                 })
-              })
+              }
+
+              if (change.type === 'modified') {
+                console.log('Modified: ', change.doc.data())
+                // const indexChange = this.reportsList.findIndex(
+                //   (re) => re.imgSrc === change.doc.data().imgSrc
+                // )
+
+                // console.log('IndexChange: ', indexChange)
+                // newDocData.push({
+                //     locationName: docData.locationName,
+                //     imgSrc: docData.imgSrc,
+                //     detail: docData.reportDetails,
+                //     timeStamp: this.convertDateTime(docData.timeStamp.seconds),
+                //     photoURL: eUser.photoURL,
+                //     displayName: eUser.displayName,
+                //   })
+                // this.$set(this.reportsList, indexChange, newDocData)
+              }
+
+              if (change.type === 'removed') {
+              }
             })
-            console.log('All report list: ', this.reportsList)
-            console.log('Report List: ', this.reportsList[0].locationName)
+            // docs.forEach((doc) => {
+            //   console.log('Doc data ', doc.data())
+
+            //   const indexImgReport = this.reportImages.findIndex(
+            //     (img) => img.imgSrc === doc.data().imgSrc
+            //   )
+
+            //   if (indexImgReport === -1) {
+            //     this.reportImages.push({ imgSrc: doc.data().imgSrc })
+            //   }
+
+            //   this.getUserReport(doc.data().accountId, (eUser) => {
+            //     const indexUserReport = this.imageList.findIndex(
+            //       (img) => img.imgSrc === eUser.photoURL
+            //     )
+
+            //     if (indexUserReport === -1) {
+            //       this.imageList.push({
+            //         imgSrc: eUser.photoURL,
+            //       })
+            //     }
+
+            //     this.reportsList.push({
+            //       locationName: doc.data().locationName,
+            //       imgSrc: doc.data().imgSrc,
+            //       detail: doc.data().reportDetails,
+            //       timeStamp: this.convertDateTime(doc.data().timeStamp.seconds),
+            //       photoURL: eUser.photoURL,
+            //       displayName: eUser.displayName,
+            //     })
+            //   })
+            // })
+            // console.log('All report list: ', this.reportsList)
+            // console.log('Report List: ', this.reportsList[0].locationName)
           })
       } catch (error) {
         console.log('Error get report of mission ', error)
@@ -428,6 +502,50 @@ export default {
           callback(e.data())
         })
       } catch (error) {}
+    },
+    async deleteReportMission(index) {
+      // Dismiss Dialog by dialog id
+      this.dialog['dialog_' + index] = false
+
+      console.log('reportId Report Delete: ', this.reportsList[index])
+      const reportId = this.reportsList[index].reportId
+      this.isRemoveLoading = true
+      await this.$fire.firestore
+        .collection('reports')
+        .where('reportId', '==', reportId)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const docData = doc.data()
+            console.log('Reports Data: ', docData)
+
+            this.moveToTrash(docData, () => {
+              doc.ref.delete()
+
+              // Splice report list
+              const indexRemove = this.reportsList.findIndex(
+                (re) => re.reportId === docData.reportId
+              )
+              this.reportsList.splice(indexRemove, 1)
+
+              this.isRemoveLoading = false
+              console.log('doc.ref.delete')
+            })
+          })
+        })
+    },
+    async moveToTrash(docData, callback) {
+      console.log('Move To Trash: ', docData)
+      await this.$fire.firestore
+        .collection('trashs')
+        .doc()
+        .set(docData)
+        .then(() => {
+          callback()
+        })
+        .catch((error) => {
+          console.log('Cannot move: ', error)
+        })
     },
     convertDateTime(microsecond) {
       try {
