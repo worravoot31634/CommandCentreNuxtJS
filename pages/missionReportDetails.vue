@@ -20,7 +20,7 @@
                     <v-carousel-item
                       v-for="(item, i) in reportImages"
                       :key="i"
-                      :src="item.img"
+                      :src="item.imgSrc"
                     >
                     </v-carousel-item>
                   </v-carousel>
@@ -63,7 +63,7 @@
                         :key="index"
                       >
                         <img
-                          :src="image.src"
+                          :src="image.imgSrc"
                           alt=""
                           style="width: 35px; height: 35px"
                         />
@@ -147,32 +147,31 @@
       <v-tab-item>
         <v-card color="basil" flat>
           <v-card-title class="title-text">{{ sceneOfaccident }}</v-card-title>
-          <v-card>
+          <v-card
+            class="mb-5"
+            :key="index"
+            v-for="(report, index) in reportsList"
+            height="15%"
+          >
             <v-container>
               <v-row>
                 <v-col cols="6" sm="2">
-                  <v-img
-                    height="100%"
-                    src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-                  ></v-img>
+                  <v-img height="100%" :src="report.imgSrc"></v-img>
                 </v-col>
                 <v-col cols="6" sm="4">
                   <v-list-item>
                     <v-avatar>
-                      <img
-                        src="https://cdn.vuetifyjs.com/images/john.jpg"
-                        alt="John"
-                      />
+                      <img :src="report.photoURL" />
                     </v-avatar>
                     <v-list-item-content class="px-2">
                       <v-list-item-title class="h3 pt-1">
-                        {{ text2 }}
+                        {{ report.displayName }}
                       </v-list-item-title>
                       <v-list-item-title class="title-text pt-1">
-                        {{ locationName }}
+                        {{ report.locationName }}
                       </v-list-item-title>
                       <v-list-item-subtitle class="subtitle-text pt-1">
-                        {{ situationTime }}
+                        {{ report.timeStamp }}
                       </v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
@@ -235,13 +234,7 @@
                         height="100"
                         width="200"
                       >
-                        Unexpected console statement no-consoleUnexpected
-                        console statement no-consoleUnexpected console statement
-                        no-consoleUnexpected console statement
-                        no-consoleUnexpected console statement
-                        no-consoleUnexpected console statement
-                        no-consoleUnexpected console statement
-                        no-consoleUnexpected console statement no-console
+                        {{ report.detail }}
                       </v-card>
                     </v-list-item-content>
                   </v-list-item-group>
@@ -277,26 +270,7 @@ export default {
       watcher: 'ผู้พบเห็น',
       missionParticipants: 'ผู้เข้าร่วมภารกิจ',
       attendantImages: [],
-      imageList: [
-        {
-          src: 'https://cdn.vuetifyjs.com/images/john.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/john.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/john.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/john.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/john.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/john.jpg',
-        },
-      ],
+      imageList: [],
       notice: 'หมายเหตุ',
       markers: [
         {
@@ -305,12 +279,14 @@ export default {
       ],
       missionId: '',
       missionInfo: [],
+      reportsList: [],
       isLoading: true,
     }
   },
   mounted() {
     console.log('missionId mssId ', this.missionId)
     this.getMissionById()
+    this.getReportOfMission(this.missionId)
     console.log('process.browser ', process.browser)
   },
   methods: {
@@ -338,11 +314,72 @@ export default {
               lat: this.missionInfo.latLng.latitude,
               lng: this.missionInfo.latLng.longitude,
             }
-            this.reportImages.push({ img: this.missionInfo.imgSrc })
+            this.reportImages.push({ imgSrc: this.missionInfo.imgSrc })
             this.getAttendants(this.missionInfo.missionId)
           })
       } catch (error) {
         console.log('Error Get Mission: ', error)
+      }
+    },
+    async getReportOfMission(missionId) {
+      try {
+        console.log('missionID Report: ', missionId)
+        await this.$fire.firestore
+          .collection('reports')
+          .where('missionId', '==', missionId)
+          .get()
+          .then((docs) => {
+            console.log('Docs report :', docs)
+            docs.forEach((doc) => {
+              console.log('Doc data ', doc.data())
+
+              const indexImgReport = this.reportImages.findIndex(
+                (img) => img.imgSrc === doc.data().imgSrc
+              )
+
+              if (indexImgReport === -1) {
+                this.reportImages.push({ imgSrc: doc.data().imgSrc })
+              }
+
+              this.getUserReport(doc.data().accountId, (eUser) => {
+                const indexUserReport = this.imageList.findIndex(
+                  (img) => img.imgSrc === eUser.photoURL
+                )
+
+                if (indexUserReport === -1) {
+                  this.imageList.push({
+                    imgSrc: eUser.photoURL,
+                  })
+                }
+
+                this.reportsList.push({
+                  locationName: doc.data().locationName,
+                  imgSrc: doc.data().imgSrc,
+                  detail: doc.data().reportDetails,
+                  timeStamp: this.convertDateTime(doc.data().timeStamp.seconds),
+                  photoURL: eUser.photoURL,
+                  displayName: eUser.displayName,
+                })
+              })
+            })
+            console.log('All report list: ', this.reportsList)
+            console.log('Report List: ', this.reportsList[0].locationName)
+          })
+      } catch (error) {
+        console.log('Error get report of mission ', error)
+      }
+    },
+    async getUserReport(uid, callback) {
+      try {
+        await this.$fire.firestore
+          .collection('users')
+          .doc(uid)
+          .get()
+          .then((e) => {
+            callback(e.data())
+          })
+      } catch (error) {
+        console.log('Error get user report: ', error)
       }
     },
     async getAttendants(missionId) {

@@ -3,7 +3,7 @@
     <GmapMap
       ref="mapRef"
       :center="{ lat: 14.4386654, lng: 101.3722428 }"
-      :zoom="9"
+      :zoom="10"
       map-type-id="terrain"
       style="width: 100%; height: 100%"
       :options="{
@@ -23,7 +23,7 @@
         :position="{ lat: m.latitude, lng: m.longitude }"
         :icon="{
           url: require('../assets/images/marker.svg'),
-          scaledSize: { width: 80, height: 80 },
+          scaledSize: { width: 65, height: 65 },
         }"
       >
         <gmap-info-window
@@ -33,9 +33,9 @@
         >
           <v-img
             :src="m.imgSrc"
-            max-width="200"
+            max-width="100"
             width="100%"
-            height="150"
+            height="100"
             class="align-content-center"
           />
           <v-list-item class="px-0 py-0" min-height="0">
@@ -51,12 +51,16 @@
             </v-card-title>
           </v-list-item>
           <v-list-item-group>
-            <v-card-title class="px-0 py-0" style="font-family: Prompt">{{
-              m.locationName
-            }}</v-card-title>
-            <v-card-subtitle class="pt-3 px-0" style="font-family: Prompt">{{
-              m.situationTime
-            }}</v-card-subtitle>
+            <v-card-title
+              class="px-0 py-0"
+              style="font-family: Prompt; font-size: 16px"
+              >{{ m.locationName }}</v-card-title
+            >
+            <v-card-subtitle
+              class="pt-3 px-0"
+              style="font-family: Prompt; font-size: 8px"
+              >{{ m.situationTime }}</v-card-subtitle
+            >
           </v-list-item-group>
         </gmap-info-window>
       </GmapMarker>
