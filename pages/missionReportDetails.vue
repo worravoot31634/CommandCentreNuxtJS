@@ -93,14 +93,13 @@
                   </v-col>
                   <v-row class="mt-1" style="padding: 3%">
                     <v-col cols="12" md="16" align="center">
-                      <v-btn class="px-8 mx-10">
-                        <router-link
-                          to="/mission"
-                          class="black--text h6"
-                          style="text-decoration: none"
-                          >กลับ
-                        </router-link>
-                      </v-btn>
+                      <router-link
+                        to="/mission"
+                        class="black--text h6"
+                        style="text-decoration: none"
+                      >
+                        <v-btn class="px-8 mx-10"> กลับ </v-btn>
+                      </router-link>
                     </v-col>
                   </v-row>
                 </v-card>
@@ -478,6 +477,13 @@ export default {
                 (re) => re.reportId === docData.reportId
               )
               this.reportsList.splice(indexRemove, 1)
+
+              // Splice images report list from slide
+              const indexImageSlide = this.reportImages.findIndex(
+                (re) => re.imgSrc === docData.imgSrc
+              )
+              console.log('Index Image Slide: ', indexImageSlide)
+              this.reportImages.splice(indexImageSlide, 1)
 
               this.isRemoveLoading = false
               console.log('doc.ref.delete')
