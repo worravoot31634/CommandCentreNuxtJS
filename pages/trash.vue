@@ -1,5 +1,8 @@
 <template>
   <v-container>
+    <v-overlay :value="isRestoreLoading" opacity="0.7">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
     <v-card class="my-10" style="padding: 2%">
       <v-card
         :key="index"
@@ -40,7 +43,12 @@
                   <v-row class="h3 pt-1 title-text">
                     <v-col cols="8" md="4">{{ notice }}</v-col>
                     <v-col cols="4" md="8" class="text-right">
-                      <v-dialog v-model="dialog" persistent max-width="400">
+                      <v-dialog
+                        v-model="dialog['dialog_' + index]"
+                        persistent
+                        max-width="400"
+                        :retain-focus="false"
+                      >
                         <template v-slot:activator="{ on, attrs }">
                           <v-btn
                             style="margin: 1%"
@@ -62,14 +70,14 @@
                             <v-btn
                               color="green darken-1"
                               text
-                              @click="dialog = false"
+                              @click="dialog['dialog_' + index] = false"
                             >
                               {{ cancel }}
                             </v-btn>
                             <v-btn
                               color="green darken-1"
                               text
-                              @click="dialog = false"
+                              @click="restoreReport(index)"
                             >
                               {{ accept }}
                             </v-btn>
@@ -105,7 +113,7 @@
 export default {
   data() {
     return {
-      dialog: false,
+      dialog: [],
       tab: null,
       accept: 'ตกลง',
       cancel: 'ยกเลิก',
@@ -150,6 +158,8 @@ export default {
         },
       ],
       trashList: [],
+      restoreTrashList: [],
+      isRestoreLoading: false,
     }
   },
   mounted() {
@@ -157,38 +167,86 @@ export default {
   },
   methods: {
     async getTrashs() {
-      await this.$fire.firestore
-        .collection('trashs')
-        .onSnapshot((querySnapshot) => {
-          querySnapshot.docChanges().forEach((change) => {
-            const docData = change.doc.data()
-            if (change.type === 'added') {
-              console.log('Added: ', change.doc.data())
-              this.getUserReport(docData.accountId, (eUser) => {
-                this.trashList.push({
-                  uid: docData.accountId,
-                  imgSrc: docData.imgSrc,
-                  locationName: docData.locationName,
-                  missionId: docData.missionId,
-                  detail: docData.reportDetails,
-                  reportId: docData.reportId,
-                  timeStamp: this.convertDateTime(docData.timeStamp.seconds),
-                  displayName: eUser.displayName,
-                  photoURL: eUser.photoURL,
+      try {
+        await this.$fire.firestore
+          .collection('trashs')
+          .onSnapshot((querySnapshot) => {
+            querySnapshot.docChanges().forEach((change) => {
+              const docData = change.doc.data()
+              if (change.type === 'added') {
+                console.log('Added: ', change.doc.data())
+                this.getUserReport(docData.accountId, (eUser) => {
+                  this.restoreTrashList.push(docData)
+                  this.trashList.push({
+                    uid: docData.accountId,
+                    imgSrc: docData.imgSrc,
+                    locationName: docData.locationName,
+                    missionId: docData.missionId,
+                    detail: docData.reportDetails,
+                    reportId: docData.reportId,
+                    timeStamp: this.convertDateTime(docData.timeStamp.seconds),
+                    displayName: eUser.displayName,
+                    photoURL: eUser.photoURL,
+                  })
                 })
-              })
-              console.log('Trash List: ', this.trashList)
-            }
+                console.log('Trash List: ', this.trashList)
+              }
 
-            if (change.type === 'modified') {
-              console.log('Modified: ', change.doc.data())
-            }
+              if (change.type === 'modified') {
+                console.log('Modified: ', change.doc.data())
+              }
 
-            if (change.type === 'removed') {
-              console.log('Removed: ', change.doc.data())
-            }
+              if (change.type === 'removed') {
+                console.log('Removed: ', change.doc.data())
+                const indexRestore = this.trashList.findIndex(
+                  (trash) => trash.reportId === docData.reportId
+                )
+                this.trashList.splice(indexRestore, 1)
+              }
+            })
           })
+      } catch (error) {
+        console.log('Error get trash: ', error)
+      }
+    },
+    restoreReport(index) {
+      try {
+        this.dialog['dialog_' + index] = false
+        this.isRestoreLoading = true
+        const reportId = this.restoreTrashList[index].reportId
+        const reportRestore = this.restoreTrashList[index]
+        console.log('Report ID: ', reportId)
+
+        this.setRestoreReport(reportId, reportRestore, async () => {
+          await this.$fire.firestore
+            .collection('trashs')
+            .where('reportId', '==', reportId)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                doc.ref.delete()
+                this.isRestoreLoading = false
+              })
+            })
         })
+      } catch (error) {
+        console.log('Erorr restore report: ', error)
+      }
+    },
+    async setRestoreReport(reportId, reportRestore, callback) {
+      try {
+        console.log(reportId, reportRestore)
+        await this.$fire.firestore
+          .collection('reports')
+          .doc(reportId.toString())
+          .set(reportRestore)
+          .then(() => {
+            console.log('Restored')
+            callback()
+          })
+      } catch (error) {
+        console.log(error)
+      }
     },
     async getUserReport(uid, callback) {
       await this.$fire.firestore

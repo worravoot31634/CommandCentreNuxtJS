@@ -337,7 +337,6 @@ export default {
     async getReportOfMission(missionId) {
       try {
         console.log('missionID Report: ', missionId)
-        // const newDocData = []
 
         await this.$fire.firestore
           .collection('reports')
@@ -385,59 +384,11 @@ export default {
 
               if (change.type === 'modified') {
                 console.log('Modified: ', change.doc.data())
-                // const indexChange = this.reportsList.findIndex(
-                //   (re) => re.imgSrc === change.doc.data().imgSrc
-                // )
-
-                // console.log('IndexChange: ', indexChange)
-                // newDocData.push({
-                //     locationName: docData.locationName,
-                //     imgSrc: docData.imgSrc,
-                //     detail: docData.reportDetails,
-                //     timeStamp: this.convertDateTime(docData.timeStamp.seconds),
-                //     photoURL: eUser.photoURL,
-                //     displayName: eUser.displayName,
-                //   })
-                // this.$set(this.reportsList, indexChange, newDocData)
               }
 
               if (change.type === 'removed') {
               }
             })
-            // docs.forEach((doc) => {
-            //   console.log('Doc data ', doc.data())
-
-            //   const indexImgReport = this.reportImages.findIndex(
-            //     (img) => img.imgSrc === doc.data().imgSrc
-            //   )
-
-            //   if (indexImgReport === -1) {
-            //     this.reportImages.push({ imgSrc: doc.data().imgSrc })
-            //   }
-
-            //   this.getUserReport(doc.data().accountId, (eUser) => {
-            //     const indexUserReport = this.imageList.findIndex(
-            //       (img) => img.imgSrc === eUser.photoURL
-            //     )
-
-            //     if (indexUserReport === -1) {
-            //       this.imageList.push({
-            //         imgSrc: eUser.photoURL,
-            //       })
-            //     }
-
-            //     this.reportsList.push({
-            //       locationName: doc.data().locationName,
-            //       imgSrc: doc.data().imgSrc,
-            //       detail: doc.data().reportDetails,
-            //       timeStamp: this.convertDateTime(doc.data().timeStamp.seconds),
-            //       photoURL: eUser.photoURL,
-            //       displayName: eUser.displayName,
-            //     })
-            //   })
-            // })
-            // console.log('All report list: ', this.reportsList)
-            // console.log('Report List: ', this.reportsList[0].locationName)
           })
       } catch (error) {
         console.log('Error get report of mission ', error)
