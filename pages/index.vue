@@ -1,9 +1,12 @@
 <template>
   <div style="height: 100%">
+    <v-overlay :value="isLoading" opacity="0.7">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
     <GmapMap
       ref="mapRef"
       :center="{ lat: 14.4386654, lng: 101.3722428 }"
-      :zoom="9"
+      :zoom="10"
       map-type-id="terrain"
       style="width: 100%; height: 100%"
       :options="{
@@ -23,7 +26,7 @@
         :position="{ lat: m.latitude, lng: m.longitude }"
         :icon="{
           url: require('../assets/images/marker.svg'),
-          scaledSize: { width: 80, height: 80 },
+          scaledSize: { width: 65, height: 65 },
         }"
       >
         <gmap-info-window
@@ -33,9 +36,8 @@
         >
           <v-img
             :src="m.imgSrc"
-            max-width="200"
-            width="100%"
-            height="150"
+            max-width="150"
+            width="140px"
             class="align-content-center"
           />
           <v-list-item class="px-0 py-0" min-height="0">
@@ -51,12 +53,16 @@
             </v-card-title>
           </v-list-item>
           <v-list-item-group>
-            <v-card-title class="px-0 py-0" style="font-family: Prompt">{{
-              m.locationName
-            }}</v-card-title>
-            <v-card-subtitle class="pt-3 px-0" style="font-family: Prompt">{{
-              m.situationTime
-            }}</v-card-subtitle>
+            <v-card-title
+              class="px-0 py-0"
+              style="font-family: Prompt; font-size: 0.7rem"
+              >{{ m.locationName }}</v-card-title
+            >
+            <v-card-subtitle
+              class="pt-3 px-0"
+              style="font-family: Prompt; font-size: 9px"
+              >{{ m.situationTime }}</v-card-subtitle
+            >
           </v-list-item-group>
         </gmap-info-window>
       </GmapMarker>
@@ -73,7 +79,6 @@ export default {
     return {
       currentLocation: {},
       marker: undefined,
-      situationTime: '30 กันยายน 2020 Time 15:52',
       i: 0,
       locations: [],
       infoOptions: {
