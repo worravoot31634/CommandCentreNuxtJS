@@ -21,7 +21,6 @@ export default {
     'vue-select-image/dist/vue-select-image.css',
   ],
 
-
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
     { src: '~/plugins/googleMap', ssr: true },
@@ -64,8 +63,7 @@ export default {
           databaseURL: 'https://eletor-e20d1-default-rtdb.firebaseio.com',
           projectId: 'eletor-e20d1',
           storageBucket: 'eletor-e20d1.appspot.com',
-          messag
-          ingSenderId: '947968230344',
+          messagingingSenderId: '947968230344',
           appId: '1:947968230344:web:39447939b86b97be16f6fd',
           measurementId: 'G-LG35PVXDE3',
         },

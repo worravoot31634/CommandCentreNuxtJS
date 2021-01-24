@@ -296,15 +296,10 @@ export default {
     }
   },
   mounted() {
-    console.log('missionId mssId ', this.missionId)
     this.getMissionById()
     this.getReportOfMission(this.missionId)
-    console.log('process.browser ', process.browser)
   },
   methods: {
-    matchHeight() {
-      console.log('params: ', this.missionId)
-    },
     async getMissionById() {
       try {
         await this.$fire.firestore
@@ -335,8 +330,6 @@ export default {
     },
     async getReportOfMission(missionId) {
       try {
-        console.log('missionID Report: ', missionId)
-
         await this.$fire.firestore
           .collection('reports')
           .where('missionId', '==', missionId)
@@ -352,10 +345,8 @@ export default {
                 )
 
                 if (indexImgReport === -1) {
-                  console.log(docData.imgSrc)
                   this.reportImages.push({ imgSrc: docData.imgSrc })
                 }
-                console.log('Report Images: ', this.reportImages)
 
                 this.getUserReport(docData.accountId, (eUser) => {
                   const indexUserReport = this.imageList.findIndex(
@@ -457,7 +448,6 @@ export default {
       // Dismiss Dialog by dialog id
       this.dialog['dialog_' + index] = false
 
-      console.log('reportId Report Delete: ', this.reportsList[index])
       const reportId = this.reportsList[index].reportId
       this.isRemoveLoading = true
       await this.$fire.firestore
@@ -467,7 +457,6 @@ export default {
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             const docData = doc.data()
-            console.log('Reports Data: ', docData)
 
             this.moveToTrash(docData, () => {
               doc.ref.delete()
@@ -482,17 +471,15 @@ export default {
               const indexImageSlide = this.reportImages.findIndex(
                 (re) => re.imgSrc === docData.imgSrc
               )
-              console.log('Index Image Slide: ', indexImageSlide)
+
               this.reportImages.splice(indexImageSlide, 1)
 
               this.isRemoveLoading = false
-              console.log('doc.ref.delete')
             })
           })
         })
     },
     async moveToTrash(docData, callback) {
-      console.log('Move To Trash: ', docData)
       await this.$fire.firestore
         .collection('trashs')
         .doc()
@@ -501,7 +488,7 @@ export default {
           callback()
         })
         .catch((error) => {
-          console.log('Cannot move: ', error)
+          console.log('Error cannot move: ', error)
         })
     },
     convertDateTime(microsecond) {
@@ -523,7 +510,6 @@ export default {
   },
   created() {
     this.missionId = this.$route.query.mission
-    console.log('missionID Query ', this.missionId)
   },
 }
 </script>

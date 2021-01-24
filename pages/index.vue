@@ -120,9 +120,10 @@ export default {
           .onSnapshot((querySnapshot) => {
             querySnapshot.docChanges().forEach((change) => {
               const missionDocs = change.doc.data()
-              console.log(change.doc.data())
+
               if (change.type === 'added') {
                 console.log('Added: ', change.doc.data())
+
                 situationTime = missionDocs.startTimeStamp.toDate().getTime()
                 this.locations.push({
                   locationName: missionDocs.locationName,
@@ -147,7 +148,7 @@ export default {
                 const indexChange = this.locations.findIndex(
                   (loc) => loc.imgSrc === change.doc.data().imgSrc
                 )
-                console.log('Index Change ', indexChange)
+
                 this.locations.splice(indexChange, 1)
                 this.isLoading = false
               }

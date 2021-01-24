@@ -3,7 +3,23 @@
     <v-overlay :value="isRestoreLoading" opacity="0.7">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <v-card class="my-10" style="padding: 2%">
+    <v-container class="full-height my-16" fluid>
+      <v-row justify="center" align="center">
+        <v-col cols="12" md="12" class="d-flex justify-center align-center">
+          <img src="../assets/images/box.svg" width="20%" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-card-title
+            class="justify-center white--text py-10"
+            style="font-size: 100px"
+            >ไม่มีข้อมูล</v-card-title
+          >
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-card class="my-10" style="padding: 2%" v-if="isTrashNotNull">
       <v-card
         :key="index"
         v-for="(trash, index) in trashList"
@@ -135,6 +151,7 @@ export default {
       trashList: [],
       restoreTrashList: [],
       isRestoreLoading: false,
+      isTrashNotNull: false,
     }
   },
   mounted() {
