@@ -123,34 +123,9 @@ export default {
       imgElephant: 'ภาพเหตุการณ์',
       sceneOfaccident: 'จุดเกิดเหตุ',
       msg_dialog_restore: 'ท่านต้องการย้ายการแจ้งเตือนหรือไม่',
-      itemsImages: [
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg',
-        },
-      ],
       locationName: 'หมู่บ้านเขาใหญ่',
       situationTime: '30 กันยายน 2020 Time 15:52',
       watcher: 'ผู้พบเห็น',
-      imageList: [
-        {
-          src: 'https://cdn.vuetifyjs.com/images/john.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/john.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/john.jpg',
-        },
-      ],
       notice: 'หมายเหตุ',
       markers: [
         {
@@ -173,8 +148,10 @@ export default {
           .onSnapshot((querySnapshot) => {
             querySnapshot.docChanges().forEach((change) => {
               const docData = change.doc.data()
+
               if (change.type === 'added') {
                 console.log('Added: ', change.doc.data())
+
                 this.getUserReport(docData.accountId, (eUser) => {
                   this.restoreTrashList.push(docData)
                   this.trashList.push({
@@ -189,7 +166,6 @@ export default {
                     photoURL: eUser.photoURL,
                   })
                 })
-                console.log('Trash List: ', this.trashList)
               }
 
               if (change.type === 'modified') {
@@ -198,6 +174,7 @@ export default {
 
               if (change.type === 'removed') {
                 console.log('Removed: ', change.doc.data())
+
                 const indexRestore = this.trashList.findIndex(
                   (trash) => trash.reportId === docData.reportId
                 )
@@ -215,7 +192,6 @@ export default {
         this.isRestoreLoading = true
         const reportId = this.restoreTrashList[index].reportId
         const reportRestore = this.restoreTrashList[index]
-        console.log('Report ID: ', reportId)
 
         this.setRestoreReport(reportId, reportRestore, async () => {
           await this.$fire.firestore
@@ -241,11 +217,10 @@ export default {
           .doc(reportId.toString())
           .set(reportRestore)
           .then(() => {
-            console.log('Restored')
             callback()
           })
       } catch (error) {
-        console.log(error)
+        console.log('Error set restore report: ', error)
       }
     },
     async getUserReport(uid, callback) {

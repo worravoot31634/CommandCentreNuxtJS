@@ -101,7 +101,6 @@ export default {
   },
   methods: {
     getIndex(index) {
-      console.log('this.items[index].missionId ', this.items[index].missionId)
       this.$router.push({
         path: 'missionReportDetails',
         query: {
@@ -119,10 +118,8 @@ export default {
           .where('missionStatus', '==', 0)
           .onSnapshot((querySnapshot) => {
             querySnapshot.docChanges().forEach((change) => {
-              //  console.log(change.doc.data())
               const doc = change.doc.data()
 
-              console.log(doc)
               if (change.type === 'added') {
                 console.log('Added: ', change.doc.data())
                 const reportTime = doc.startTimeStamp.toDate().getTime()
@@ -141,6 +138,7 @@ export default {
               if (change.type === 'modified') {
                 console.log('Modified: ', change.doc.data())
                 const reportTime = doc.startTimeStamp.toDate().getTime()
+
                 editMission = {
                   missionId: doc.missionId,
                   img: doc.imgSrc,
@@ -155,10 +153,7 @@ export default {
                 const indexChange = this.items.findIndex(
                   (id) => id.missionId === editMission.missionId
                 )
-                console.log('index ', indexChange)
-                console.log('edit data ', editMission)
                 this.$set(this.items, indexChange, editMission)
-                console.log('items ', this.items)
               }
               if (change.type === 'removed') {
                 console.log('Removed: ', change.doc.data())

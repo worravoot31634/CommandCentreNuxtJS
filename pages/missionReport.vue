@@ -3,7 +3,7 @@
     <v-overlay :value="isQueryLoading" opacity="0.7">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <v-card style="margin: 2%" class="align-center justify-center">
+    <v-card style="margin: 1%" class="align-center justify-center">
       <v-row>
         <!-- icon and caption -->
         <v-col cols="12" md="4" class="px-0" no-gutters>
@@ -107,8 +107,8 @@
 
     <v-container fluid>
       <v-row no-gutters>
-        <v-col cols="12" md="7" no-gutters>
-          <v-col no-gutters>
+        <v-col cols="12" md="7">
+          <v-col class="px-1">
             <v-card>
               <v-row>
                 <v-col cols="12" md="6">
@@ -168,7 +168,7 @@
               </v-list-item-group>
             </v-card>
           </v-col>
-          <v-col no-gutters id="infoCard">
+          <v-col class="px-1" id="infoCard">
             <v-card>
               <v-list-item>
                 <v-icon size="40">mdi-map-marker-radius</v-icon>
@@ -187,11 +187,20 @@
             </v-card>
           </v-col>
         </v-col>
-        <v-col cols="12" md="5" style="backgroundcolor: red">
-          <v-col class="py-0">
+        <v-col cols="12" md="5">
+          <v-col class="py-0 pr-1 pl-2">
             <v-card>
               <!-- start card -->
               <v-container style="padding: 3%">
+                <v-row justify="center" align="center">
+                  <v-col cols="12" md="6">
+                    <v-card-title
+                      v-if="!isNotNull"
+                      class="justify-center black--text"
+                      >ไม่พบข้อมูล</v-card-title
+                    >
+                  </v-col>
+                </v-row>
                 <v-card
                   class="my-2"
                   :key="index"
@@ -277,7 +286,7 @@ export default {
     startDateMenu: false,
     endDate: format(parseISO(new Date().toISOString()), 'yyyy-MM-dd'),
     endDateMenu: false,
-    violentType: ['ทั้งหมด', 'มาก', 'น้อย'],
+    violentType: ['ทั้งหมด', 'มากไปน้อย', 'น้อยไปมาก'],
     locationName: 'หมู่บ้านเขาใหญ่',
     situationTime: '30 กันยายน 2020 Time 15:52',
     currentLocation: {},
@@ -365,8 +374,6 @@ export default {
   methods: {
     pointHeatMap() {
       try {
-        // const latlon = new this.google.maps.MVCArray()
-        console.log('TypeOf latlon: ', typeof this.latlon)
         if (this.latlon !== null) {
           this.latlon.clear()
         }
@@ -405,6 +412,7 @@ export default {
         this.chartValueList = []
         this.pagesList = []
         this.isQueryLoading = true
+        this.isNotNull = false
 
         /// Dynamic List follow by [chartLabelList] length
         if (this.chartOption === 2) {
@@ -455,7 +463,7 @@ export default {
               const lastElement = this.queryList[this.queryList.length - 1]
 
               // Query by severity and Default value is ASC
-              if (this.violent === 'มาก') {
+              if (this.violent === 'มากไปน้อย') {
                 this.DESC(lastElement, e.data())
               } else {
                 this.ASC(lastElement, e.data())
