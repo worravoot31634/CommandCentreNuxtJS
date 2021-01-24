@@ -3,12 +3,12 @@
     <v-overlay :value="isQueryLoading" opacity="0.7">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <v-card style="margin: 1%" class="align-center justify-center">
+    <v-card class="align-center justify-center ml-4 mt-6 mr-4 mb-4">
       <v-row>
         <!-- icon and caption -->
         <v-col cols="12" md="4" class="px-0" no-gutters>
           <v-list-item>
-            <v-card-title class="subtitle-2 pl-2 py-0 pr-4 pl-2">
+            <v-card-title class="subtitle-2 pl-2 py-0 pr-2">
               เลือกช่วงเวลา
             </v-card-title>
             <!-- Start Date picker -->
@@ -16,7 +16,7 @@
               v-model="startDateMenu"
               :close-on-content-click="false"
               min-width="15%"
-              class="justify-center"
+              class="justify-center pl-2"
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-row align="center" justify="center">

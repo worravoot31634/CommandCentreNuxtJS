@@ -5,7 +5,7 @@
     </v-overlay>
     <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
       <v-tab v-for="item in items" :key="item">
-        <h1 class="mdc-typography-styles-headline1">{{ item }}</h1>
+        <h2>{{ item }}</h2>
       </v-tab>
     </v-tabs>
 
@@ -113,7 +113,10 @@
                   <v-list-item-content style="padding: 2%" height="100%">
                     <GmapMap
                       ref="mapRef"
-                      :center="{ lat: 14.4386654, lng: 101.3722428 }"
+                      :center="{
+                        lat: lat || 14.4386654,
+                        lng: lng || 101.3722428,
+                      }"
                       :zoom="9"
                       map-type-id="terrain"
                       style="width: 500px; height: 650px"
@@ -293,18 +296,15 @@ export default {
       isshowDialog: true,
       isLoading: true,
       isRemoveLoading: false,
+      lat: 0,
+      lng: 0,
     }
   },
   mounted() {
-    console.log('missionId mssId ', this.missionId)
     this.getMissionById()
     this.getReportOfMission(this.missionId)
-    console.log('process.browser ', process.browser)
   },
   methods: {
-    matchHeight() {
-      console.log('params: ', this.missionId)
-    },
     async getMissionById() {
       try {
         await this.$fire.firestore
@@ -322,11 +322,13 @@ export default {
                 e.data().severity === 1 ? 'red' : 'orange'
             })
 
+            this.lat = this.missionInfo.latLng.latitude
+            this.lng = this.missionInfo.latLng.longitude
             this.markers.position = {
               lat: this.missionInfo.latLng.latitude,
               lng: this.missionInfo.latLng.longitude,
             }
-            this.reportImages.push({ imgSrc: this.missionInfo.imgSrc })
+
             this.getAttendants(this.missionInfo.missionId)
           })
       } catch (error) {
@@ -335,8 +337,6 @@ export default {
     },
     async getReportOfMission(missionId) {
       try {
-        console.log('missionID Report: ', missionId)
-
         await this.$fire.firestore
           .collection('reports')
           .where('missionId', '==', missionId)
@@ -348,14 +348,12 @@ export default {
                 console.log('Added: ', change.doc.data())
 
                 const indexImgReport = this.reportImages.findIndex(
-                  (img) => img.imgSrc === docData.imgSrc
+                  (re) => re.imgSrc === docData.imgSrc
                 )
 
                 if (indexImgReport === -1) {
-                  console.log(docData.imgSrc)
                   this.reportImages.push({ imgSrc: docData.imgSrc })
                 }
-                console.log('Report Images: ', this.reportImages)
 
                 this.getUserReport(docData.accountId, (eUser) => {
                   const indexUserReport = this.imageList.findIndex(
@@ -436,6 +434,7 @@ export default {
                   const indexRemove = this.attendantImages.findIndex(
                     (att) => att.imageSrc === user.photoURL
                   )
+
                   this.isLoading = false
                   this.attendantImages.splice(indexRemove, 1)
                 })
@@ -457,7 +456,6 @@ export default {
       // Dismiss Dialog by dialog id
       this.dialog['dialog_' + index] = false
 
-      console.log('reportId Report Delete: ', this.reportsList[index])
       const reportId = this.reportsList[index].reportId
       this.isRemoveLoading = true
       await this.$fire.firestore
@@ -467,7 +465,6 @@ export default {
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             const docData = doc.data()
-            console.log('Reports Data: ', docData)
 
             this.moveToTrash(docData, () => {
               doc.ref.delete()
@@ -482,17 +479,15 @@ export default {
               const indexImageSlide = this.reportImages.findIndex(
                 (re) => re.imgSrc === docData.imgSrc
               )
-              console.log('Index Image Slide: ', indexImageSlide)
+
               this.reportImages.splice(indexImageSlide, 1)
 
               this.isRemoveLoading = false
-              console.log('doc.ref.delete')
             })
           })
         })
     },
     async moveToTrash(docData, callback) {
-      console.log('Move To Trash: ', docData)
       await this.$fire.firestore
         .collection('trashs')
         .doc()
@@ -501,7 +496,7 @@ export default {
           callback()
         })
         .catch((error) => {
-          console.log('Cannot move: ', error)
+          console.log('Error cannot move: ', error)
         })
     },
     convertDateTime(microsecond) {
@@ -523,7 +518,6 @@ export default {
   },
   created() {
     this.missionId = this.$route.query.mission
-    console.log('missionID Query ', this.missionId)
   },
 }
 </script>
