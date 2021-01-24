@@ -14,11 +14,13 @@ export default {
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
+
   css: [
     '~/assets/fonts/prompt.css',
     '~/assets/css/styles.css',
     'vue-select-image/dist/vue-select-image.css',
   ],
+
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
@@ -43,6 +45,7 @@ export default {
   modules: [
     'bootstrap-vue/nuxt',
     '@nuxtjs/proxy',
+    'nuxt-webfontloader',
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     [
@@ -61,7 +64,8 @@ export default {
           databaseURL: 'https://eletor-e20d1-default-rtdb.firebaseio.com',
           projectId: 'eletor-e20d1',
           storageBucket: 'eletor-e20d1.appspot.com',
-          messagingSenderId: '947968230344',
+          messag
+          ingSenderId: '947968230344',
           appId: '1:947968230344:web:39447939b86b97be16f6fd',
           measurementId: 'G-LG35PVXDE3',
         },
@@ -75,6 +79,11 @@ export default {
   bootstrapVue: {
     bootstrapCSS: false,
     bootstrapVueCSS: false,
+  },
+  webfontloader: {
+    google: {
+      families: ['Prompt:400,500,700,900'],
+    },
   },
   styleResources: {
     scss: './scss/*.scss',
@@ -97,6 +106,9 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     treeShake: true,
+    defaultAssets: {
+      font: false,
+    },
     theme: {
       font: {
         family: 'Prompt',
