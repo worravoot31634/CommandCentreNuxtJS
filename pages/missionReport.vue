@@ -346,6 +346,7 @@ export default {
     isQueryLoading: true,
     totalMission: 0,
     averageMission: 0,
+    latlon: null,
   }),
   computed: {
     google: gmapApi,
@@ -364,25 +365,24 @@ export default {
   methods: {
     pointHeatMap() {
       try {
-        const latlon = new this.google.maps.MVCArray()
-        latlon.clear()
-        this.$nextTick(() => {
-          this.$refs.mapRef.$mapPromise.then(() => {
-            this.points.forEach((value) => {
-              latlon.push(new this.google.maps.LatLng(value.lat, value.lng))
-            })
-            console.log('LatLongLIst: ', latlon)
-            console.log('Length: ', this.points.length)
-            const x = new this.google.maps.visualization.HeatmapLayer({
-              data: latlon,
-              map: this.$refs.mapRef.$mapObject,
-            })
+        // const latlon = new this.google.maps.MVCArray()
+        console.log('TypeOf latlon: ', typeof this.latlon)
+        if (this.latlon !== null) {
+          this.latlon.clear()
+        }
 
-            if (this.points.length === 0) {
-              console.log('Jame')
-            }
-            console.log(x)
+        this.latlon = new this.google.maps.MVCArray()
+        this.$refs.mapRef.$mapPromise.then(() => {
+          this.points.forEach((value) => {
+            this.latlon.push(new this.google.maps.LatLng(value.lat, value.lng))
           })
+
+          const heatMap = new this.google.maps.visualization.HeatmapLayer({
+            data: this.latlon,
+            map: this.$refs.mapRef.$mapObject,
+          })
+
+          console.log(heatMap)
         })
       } catch (error) {
         console.log('Heat Map Error: ', error)
