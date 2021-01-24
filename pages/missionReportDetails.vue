@@ -5,7 +5,7 @@
     </v-overlay>
     <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
       <v-tab v-for="item in items" :key="item">
-        <h1 class="mdc-typography-styles-headline1">{{ item }}</h1>
+        <h2>{{ item }}</h2>
       </v-tab>
     </v-tabs>
 
@@ -113,7 +113,10 @@
                   <v-list-item-content style="padding: 2%" height="100%">
                     <GmapMap
                       ref="mapRef"
-                      :center="{ lat: 14.4386654, lng: 101.3722428 }"
+                      :center="{
+                        lat: lat || 14.4386654,
+                        lng: lng || 101.3722428,
+                      }"
                       :zoom="9"
                       map-type-id="terrain"
                       style="width: 500px; height: 650px"
@@ -293,6 +296,8 @@ export default {
       isshowDialog: true,
       isLoading: true,
       isRemoveLoading: false,
+      lat: 0,
+      lng: 0,
     }
   },
   mounted() {
@@ -317,11 +322,13 @@ export default {
                 e.data().severity === 1 ? 'red' : 'orange'
             })
 
+            this.lat = this.missionInfo.latLng.latitude
+            this.lng = this.missionInfo.latLng.longitude
             this.markers.position = {
               lat: this.missionInfo.latLng.latitude,
               lng: this.missionInfo.latLng.longitude,
             }
-            this.reportImages.push({ imgSrc: this.missionInfo.imgSrc })
+
             this.getAttendants(this.missionInfo.missionId)
           })
       } catch (error) {
@@ -341,7 +348,7 @@ export default {
                 console.log('Added: ', change.doc.data())
 
                 const indexImgReport = this.reportImages.findIndex(
-                  (img) => img.imgSrc === docData.imgSrc
+                  (re) => re.imgSrc === docData.imgSrc
                 )
 
                 if (indexImgReport === -1) {
@@ -427,6 +434,7 @@ export default {
                   const indexRemove = this.attendantImages.findIndex(
                     (att) => att.imageSrc === user.photoURL
                   )
+
                   this.isLoading = false
                   this.attendantImages.splice(indexRemove, 1)
                 })

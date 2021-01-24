@@ -1,6 +1,32 @@
 <template>
   <v-container>
-    <v-card class="my-10" style="padding: 2%">
+    <v-container class="full-height my-16" fluid v-if="isMissionNull">
+      <v-row justify="center" align="center">
+        <v-col cols="12" md="12" class="d-flex justify-center align-center">
+          <img src="../assets/images/box.svg" width="20%" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-card-title
+            class="justify-center white--text py-10"
+            style="font-size: 100px"
+            >There is no a mission</v-card-title
+          >
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-card class="my-3 mx-3" style="padding: 1%" v-if="!isMissionNull">
+      <v-container class="justify-center">
+        <v-row class="justify-center pa-2" dense>
+          <v-col cols="11">
+            <h2>
+              <v-icon x-large>mdi-arrow-decision-outline</v-icon>
+              ภารกิจปัจจุบัน
+            </h2>
+          </v-col>
+        </v-row>
+      </v-container>
       <v-container :key="i" v-for="(item, i) in items">
         <v-hover>
           <template v-slot:default="{ hover }">
@@ -49,52 +75,8 @@
 <script>
 export default {
   data: () => ({
-    itemss: [
-      {
-        level: 'รุนแรงมาก',
-        img:
-          'https://sites.google.com/site/babychangthai/_/rsrc/1472766466700/wikvt-payha-chang-thiy/13.jpg',
-        locationName: 'เขาใหญ่',
-        reportTime: '30 พฤษจิกายน 2563 เวลา 15.52 น.',
-      },
-      {
-        level: 'รุนแรงมาก',
-        img:
-          'https://img.theculturetrip.com/wp-content/uploads/2018/03/3429990505_a91577428a_b.jpg',
-        locationName: 'เขาใหญ่',
-        reportTime: '30 พฤษจิกายน 2563 เวลา 15.42 น.',
-      },
-      {
-        level: 'รุนแรงมาก',
-        img:
-          'https://sites.google.com/site/babychangthai/_/rsrc/1472766466700/wikvt-payha-chang-thiy/13.jpg',
-        locationName: 'เขาใหญ่3',
-        reportTime: '30 พฤษจิกายน 2563 เวลา 15.32 น.',
-      },
-      {
-        level: 'รุนแรงมาก',
-        img:
-          'https://sites.google.com/site/babychangthai/_/rsrc/1472766466700/wikvt-payha-chang-thiy/13.jpg',
-        locationName: 'เขาใหญ่',
-        reportTime: '30 พฤษจิกายน 2563 เวลา 15.52 น.',
-      },
-      {
-        level: 'รุนแรงมาก',
-        img:
-          'https://sites.google.com/site/babychangthai/_/rsrc/1472766466700/wikvt-payha-chang-thiy/13.jpg',
-        locationName: 'เขาใหญ่2',
-        reportTime: '30 พฤษจิกายน 2563 เวลา 15.42 น.',
-      },
-      {
-        color: 'white',
-        level: 'รุนแรงมาก',
-        img:
-          'https://sites.google.com/site/babychangthai/_/rsrc/1472766466700/wikvt-payha-chang-thiy/13.jpg',
-        locationName: 'เขาใหญ่3',
-        reportTime: '30 พฤษจิกายน 2563 เวลา 15.32 น.',
-      },
-    ],
     items: [],
+    isMissionNull: false,
   }),
   mounted() {
     this.getMission()
@@ -119,6 +101,9 @@ export default {
           .onSnapshot((querySnapshot) => {
             querySnapshot.docChanges().forEach((change) => {
               const doc = change.doc.data()
+
+              if (change.doc.exists === true) this.isMissionNull = false
+              else this.isMissionNull = true
 
               if (change.type === 'added') {
                 console.log('Added: ', change.doc.data())
@@ -157,6 +142,12 @@ export default {
               }
               if (change.type === 'removed') {
                 console.log('Removed: ', change.doc.data())
+
+                const indexRemove = this.items.findIndex(
+                  (id) => id.missionId === doc.missionId
+                )
+
+                this.items.splice(indexRemove, 1)
               }
             })
           })

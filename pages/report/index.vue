@@ -5,7 +5,7 @@
         <v-container class="justify-center">
           <v-row class="justify-center pa-2" dense>
             <v-col cols="11">
-              <h2><v-icon>mdi-bell</v-icon> การแจ้งเตือน</h2>
+              <h2><v-icon x-large>mdi-bell</v-icon> การแจ้งเตือน</h2>
             </v-col>
           </v-row>
         </v-container>
