@@ -120,7 +120,7 @@
                   </v-list-item>
                 </v-col>
                 <v-col cols="12" md="6" class="align-end justify-end">
-                  <v-radio-group v-model="chartOption" row>
+                  <v-radio-group v-model="chartOption" row v-on="changeChart()">
                     <v-radio
                       v-for="(n, i) in chartOptions"
                       :key="i"
@@ -296,8 +296,26 @@ export default {
     isNotNull: false,
     violent: null,
     chartOption: 1,
+    chartMonthList: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    chartWeekList: [0, 0, 0, 0, 0, 0, 0],
+    chartYearList: [],
+    chartLabelList: [],
     chartValueList: [],
-    cahrtLabelList: [],
+    thiaMonth: [
+      'ม.ค.',
+      'ก.พ.',
+      'มี.ค.',
+      'เม.ย',
+      'พ.ค.',
+      'มิ.ย.',
+      'ก.ค.',
+      'ส.ค.',
+      'ก.ย.',
+      'ต.ค.',
+      'พ.ย.',
+      'ธ.ค.',
+    ],
+    week: ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'],
   }),
   computed: {
     google: gmapApi,
@@ -311,7 +329,7 @@ export default {
     },
   },
   mounted() {
-    this.fillData()
+    this.filter()
   },
   methods: {
     pointHeatMap() {
@@ -354,10 +372,20 @@ export default {
       try {
         this.queryList = []
         this.points = []
+        this.chartMonthList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        this.chartWeekList = [0, 0, 0, 0, 0, 0, 0]
+        this.chartYearList = []
+        this.chartValueList = []
+        // this.chartYearList = this.chartLabelList.value.map(() => 0)
+        /// Dynamic List follow by [chartLabelList] length
 
-        console.log('Select: ', this.violent)
-        console.log('chartOptions: ', this.chartOption)
+        console.log('Select: ', this.chartLabelList)
+        for (const x in this.chartLabelList) {
+          console.log('XXXXXXXXXX ', x)
+          this.chartYearList.push(0)
+        }
 
+        console.log('chartOptions: ', this.chartYearList)
         await this.$fire.firestore
           .collection('mission')
           .where('startTimeStamp', '>=', startdate)
@@ -369,6 +397,26 @@ export default {
               console.log(e.data())
 
               // initialized chart value
+              const secondStartTSP = e.data().startTimeStamp.toDate()
+              //  this.chartMonth(secondStartTSP)
+
+              if (this.chartOption === 0) {
+                this.chartWeek(secondStartTSP, () => {
+                  this.chartValueList = this.chartWeekList
+                })
+              }
+
+              if (this.chartOption === 1) {
+                this.chartMonth(secondStartTSP, () => {
+                  this.chartValueList = this.chartMonthList
+                })
+              }
+
+              if (this.chartOption === 2) {
+                this.chartYear(secondStartTSP, () => {
+                  this.chartValueList = this.chartYearList
+                })
+              }
 
               // Set HeatMap Position
               this.points.push({
@@ -390,10 +438,58 @@ export default {
             console.log('Sort data: ', this.queryList)
             console.log('Points: ', this.points)
             this.pointHeatMap()
+            this.chart()
             if (this.queryList.length !== 0) this.isNotNull = true
           })
       } catch (error) {
         console.log('Error Query: ', error)
+      }
+    },
+    chartMonth(timestamp, callback) {
+      const startDate = new Date(timestamp)
+      this.chartMonthList[startDate.getMonth()] =
+        this.chartMonthList[startDate.getMonth()] + 1
+      callback()
+    },
+    chartWeek(timestamp, callback) {
+      const startDate = new Date(timestamp)
+      this.chartWeekList[startDate.getDay()] =
+        this.chartWeekList[startDate.getDay()] + 1
+      callback()
+    },
+    chartYear(timestamp, callback) {
+      const startYear = new Date(timestamp).getFullYear() + 543
+      const startYearStr = startYear.toString()
+      const indexYear = this.chartLabelList.indexOf(startYearStr)
+      this.chartYearList[indexYear] = this.chartYearList[indexYear] + 1
+      callback()
+    },
+    changeChart() {
+      if (this.chartOption === 0) {
+        this.chartLabelList = []
+        this.chartLabelList = this.week
+        console.log('ChageChart 0')
+      }
+      if (this.chartOption === 1) {
+        this.chartLabelList = []
+        this.chartLabelList = this.thiaMonth
+        console.log('ChageChart 1')
+      }
+
+      if (this.chartOption === 2) {
+        this.chartLabelList = []
+        let startYear = new Date(this.startDate).getFullYear()
+        const endYear = new Date(this.endDate).getFullYear()
+        console.log('Start Year: ', startYear)
+        console.log('End Year: ', endYear)
+        const yearLabelList = []
+        while (startYear <= endYear) {
+          yearLabelList.push((startYear + 543).toString())
+          startYear += 1
+          console.log('startYear + 1  ', startYear)
+        }
+        console.log('Year List: ', yearLabelList)
+        this.chartLabelList = yearLabelList
       }
     },
     ASC(lastElement, query) {
@@ -506,27 +602,14 @@ export default {
         console.log('Error set QueryList: ', error)
       }
     },
-    fillData() {
+    chart() {
       this.datacollection = {
-        labels: [
-          'ม.ค.',
-          'ก.พ.',
-          'มี.ค.',
-          'เม.ย',
-          'พ.ค.',
-          'มิ.ย.',
-          'ก.ค.',
-          'ส.ค.',
-          'ก.ย.',
-          'ต.ค.',
-          'พ.ย.',
-          'ธ.ค.',
-        ],
+        labels: this.chartLabelList,
         datasets: [
           {
             label: 'อัตราการแจ้งเตือน',
             backgroundColor: '#475520',
-            data: [5, 3, 2, 4, 8, 7, 9, 9, 9, 9, 9, 9],
+            data: this.chartValueList,
           },
         ],
       }
