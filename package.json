@@ -4,12 +4,12 @@
   "private": true,
   "config": {
     "nuxt": {
-      "host": "127.0.0.1",
+      "host": "192.168.1.239",
       "port": "3333"
     }
   },
   "scripts": {
-    "dev": "nuxt --HOSTNAME 127.0.0.1 --port 3333",
+    "dev": "nuxt --HOSTNAME 192.168.1.239 --port 3333",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
@@ -18,8 +18,9 @@
     "lint": "npm run lint:js"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.12.2",
+    "@nuxtjs/axios": "^5.12.5",
     "@nuxtjs/firebase": "^7.3.0",
+    "@nuxtjs/proxy": "^2.1.0",
     "bootstrap": "^4.5.3",
     "bootstrap-vue": "^2.21.2",
     "chart.js": "^2.9.4",
@@ -31,8 +32,10 @@
     "nuxt-gmaps": "^1.2.10",
     "vue": "^2.6.12",
     "vue-chartjs": "^3.5.1",
-    "vue2-google-maps": "^0.10.7",
-    "vuesax": "^3.12.2"
+    "vue-select-image": "^1.9.0",
+    "vue2-google-location-picker": "^1.0.2",
+    "vue2-location-picker": "^1.2.0",
+    "vuesax": "^4.0.1-alpha.25"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^3.1.0",

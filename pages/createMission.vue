@@ -2,10 +2,9 @@
   <v-card color="basil">
     <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
       <v-tab v-for="item in items" :key="item">
-        {{ item }}
+        <b> {{ item }}</b>
       </v-tab>
     </v-tabs>
-
     <v-tabs-items v-model="tab">
       <v-tab-item>
         <v-card color="basil" flat>
@@ -33,12 +32,16 @@
                     {{ watcher }}
                   </v-card-title>
                   <v-col class="watcher-image">
-                    <v-list-item-avatar
-                      v-for="(image, index) in imageList"
-                      :key="index"
-                    >
-                      <img :src="image.src" />
-                    </v-list-item-avatar>
+                    <div class="center con-avatars">
+                      <vs-avatar-group max="30">
+                        <vs-avatar v-for="index in 100" :key="index" circle>
+                          <img
+                            src="https://cdn.vuetifyjs.com/images/john.jpg"
+                            alt=""
+                          />
+                        </vs-avatar>
+                      </vs-avatar-group>
+                    </div>
                   </v-col>
                   <v-row class="mt-10" style="padding: 3%">
                     <v-col cols="12" md="16" align="center">
@@ -190,6 +193,8 @@
 export default {
   data() {
     return {
+      test: 'not change ',
+      report: [],
       dialog: false,
       tab: null,
       accept: 'ตกลง',
