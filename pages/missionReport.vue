@@ -1,5 +1,8 @@
 <template>
   <v-container fluid>
+    <v-overlay :value="isQueryLoading" opacity="0.7">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
     <v-card style="margin: 2%" class="align-center justify-center">
       <v-row>
         <!-- icon and caption -->
@@ -113,8 +116,12 @@
                     <v-icon size="40">mdi-chart-bar-stacked</v-icon>
                     <v-list-item-group>
                       <v-card-title>สรุปผลภารกิจ</v-card-title>
-                      <v-card-subtitle
-                        >1 December 2020 - 31 December 2020
+                      <v-card-subtitle>
+                        {{
+                          new Date(startDate).toLocaleDateString() +
+                          ' - ' +
+                          new Date(endDate).toLocaleDateString()
+                        }}
                       </v-card-subtitle>
                     </v-list-item-group>
                   </v-list-item>
@@ -146,7 +153,7 @@
                       ภารกิจทั้งหมด
                     </v-card-title>
                     <v-card-subtitle class="headline">
-                      132 ครั้ง
+                      {{ totalMission }} ครั้ง
                     </v-card-subtitle>
                   </v-col>
                   <v-col>
@@ -154,7 +161,7 @@
                       ภารกิจเฉลี่ยต่อวัน
                     </v-card-title>
                     <v-card-subtitle class="headline">
-                      4.25 ครั้ง
+                      {{ averageMission }} ครั้ง
                     </v-card-subtitle>
                   </v-col>
                 </v-list-item>
@@ -188,8 +195,7 @@
                 <v-card
                   class="my-2"
                   :key="index"
-                  :v-if="queryList.length != 0"
-                  v-for="(mission, index) in queryList"
+                  v-for="(mission, index) in pagesList"
                 >
                   <v-container>
                     <v-row>
@@ -224,14 +230,29 @@
                           <v-card-title class="pt-0 black--text">{{
                             mission.locationName
                           }}</v-card-title>
-                          <v-card-subtitle>{{
-                            mission.details
-                          }}</v-card-subtitle>
+                          <v-card-subtitle class="col-12 text-truncate">
+                            {{ mission.details }}
+                          </v-card-subtitle>
                         </v-list-item-content>
                       </v-col>
                     </v-row>
                   </v-container>
                 </v-card>
+                <v-row>
+                  <v-col>
+                    <div class="text-center py-1">
+                      <v-pagination
+                        v-if="isPaginationShow"
+                        v-model="page"
+                        v-on:next="nextData"
+                        v-on:previous="previousData"
+                        v-on:input="inputData"
+                        :length="totalPage"
+                        :total-visible="tVisiblePagination"
+                      ></v-pagination>
+                    </div>
+                  </v-col>
+                </v-row>
               </v-container>
               <!-- end card -->
             </v-card>
@@ -316,6 +337,15 @@ export default {
       'ธ.ค.',
     ],
     week: ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'],
+    page: 1,
+    isPaginationShow: false,
+    totalPage: 0,
+    perPage: 7,
+    tVisiblePagination: 5,
+    pagesList: [],
+    isQueryLoading: true,
+    totalMission: 0,
+    averageMission: 0,
   }),
   computed: {
     google: gmapApi,
@@ -362,30 +392,28 @@ export default {
       const startMicro = new Date(this.startDate)
       const endMicro = new Date(this.endDate)
       endMicro.setHours(23, 59)
-      console.log('StartDate: ', startMicro)
-      console.log('End Date: ', endMicro)
-
-      console.log('Timestamp: ')
       this.query(startMicro, endMicro)
     },
     async query(startdate, enddate) {
       try {
+        /// Clear value in List for every query
         this.queryList = []
         this.points = []
         this.chartMonthList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         this.chartWeekList = [0, 0, 0, 0, 0, 0, 0]
         this.chartYearList = []
         this.chartValueList = []
-        // this.chartYearList = this.chartLabelList.value.map(() => 0)
-        /// Dynamic List follow by [chartLabelList] length
+        this.pagesList = []
+        this.isQueryLoading = true
 
-        console.log('Select: ', this.chartLabelList)
-        for (const x in this.chartLabelList) {
-          console.log('XXXXXXXXXX ', x)
-          this.chartYearList.push(0)
+        /// Dynamic List follow by [chartLabelList] length
+        if (this.chartOption === 2) {
+          for (const x in this.chartLabelList) {
+            console.log(x)
+            this.chartYearList.push(0)
+          }
         }
 
-        console.log('chartOptions: ', this.chartYearList)
         await this.$fire.firestore
           .collection('mission')
           .where('startTimeStamp', '>=', startdate)
@@ -394,24 +422,24 @@ export default {
           .get()
           .then((query) => {
             query.docs.forEach((e) => {
-              console.log(e.data())
-
-              // initialized chart value
+              // Microseconds for firestore [startTimeStamp]
               const secondStartTSP = e.data().startTimeStamp.toDate()
-              //  this.chartMonth(secondStartTSP)
 
+              // Query chart by a week option
               if (this.chartOption === 0) {
                 this.chartWeek(secondStartTSP, () => {
                   this.chartValueList = this.chartWeekList
                 })
               }
 
+              // Query chart by a month option
               if (this.chartOption === 1) {
                 this.chartMonth(secondStartTSP, () => {
                   this.chartValueList = this.chartMonthList
                 })
               }
 
+              // Query chart by a year option
               if (this.chartOption === 2) {
                 this.chartYear(secondStartTSP, () => {
                   this.chartValueList = this.chartYearList
@@ -423,11 +451,10 @@ export default {
                 lat: e.data().latLng.latitude,
                 lng: e.data().latLng.longitude,
               })
-              console.log('Locations: ', this.points)
 
               const lastElement = this.queryList[this.queryList.length - 1]
-              console.log(lastElement)
 
+              // Query by severity and Default value is ASC
               if (this.violent === 'มาก') {
                 this.DESC(lastElement, e.data())
               } else {
@@ -435,10 +462,29 @@ export default {
               }
             })
 
-            console.log('Sort data: ', this.queryList)
-            console.log('Points: ', this.points)
+            if (this.queryList.length > 7) {
+              this.initPage()
+              this.isPaginationShow = true
+              this.isQueryLoading = false
+            } else {
+              this.pagesList = this.queryList
+              this.isPaginationShow = false
+              this.isQueryLoading = false
+            }
+
             this.pointHeatMap()
             this.chart()
+            this.totalMission = this.queryList.length
+
+            // get sum in [cahrtValueList]
+            const querySum = this.chartValueList.reduce((sum, number) => {
+              return sum + number
+            }, 0)
+
+            // Find Average
+            const numDates = this.getDaybetweenDates(startdate, enddate)
+            this.averageMission = (querySum / numDates).toFixed(2)
+
             if (this.queryList.length !== 0) this.isNotNull = true
           })
       } catch (error) {
@@ -458,37 +504,41 @@ export default {
       callback()
     },
     chartYear(timestamp, callback) {
+      // Thai year
       const startYear = new Date(timestamp).getFullYear() + 543
+      // Convert to string
       const startYearStr = startYear.toString()
+      // Get index which search by startYearStr
       const indexYear = this.chartLabelList.indexOf(startYearStr)
+
       this.chartYearList[indexYear] = this.chartYearList[indexYear] + 1
       callback()
     },
     changeChart() {
+      // All of this change chart label
+
+      // Week label
       if (this.chartOption === 0) {
         this.chartLabelList = []
         this.chartLabelList = this.week
-        console.log('ChageChart 0')
       }
+
+      // Month label
       if (this.chartOption === 1) {
         this.chartLabelList = []
         this.chartLabelList = this.thiaMonth
-        console.log('ChageChart 1')
       }
 
+      // Year label
       if (this.chartOption === 2) {
         this.chartLabelList = []
         let startYear = new Date(this.startDate).getFullYear()
         const endYear = new Date(this.endDate).getFullYear()
-        console.log('Start Year: ', startYear)
-        console.log('End Year: ', endYear)
         const yearLabelList = []
         while (startYear <= endYear) {
           yearLabelList.push((startYear + 543).toString())
           startYear += 1
-          console.log('startYear + 1  ', startYear)
         }
-        console.log('Year List: ', yearLabelList)
         this.chartLabelList = yearLabelList
       }
     },
@@ -543,8 +593,17 @@ export default {
 
       return dateLocal
     },
+    getDaybetweenDates(first, second) {
+      const fistDate = new Date(first)
+      const secondDate = new Date(second)
+      const diffTime = secondDate.getTime() - fistDate.getTime()
+      // 86400000 number of day in microsecond
+      const numOfDay = Math.ceil(diffTime / 86400000)
+      return numOfDay
+    },
     setQueryList(query) {
       try {
+        // set data to query list
         let level = ''
         let severityColor = ''
         if (query.severity === 0) {
@@ -572,6 +631,7 @@ export default {
     },
     insertQueryList(index, query) {
       try {
+        // Insert data to query list by index
         let level = ''
         let severityColor = ''
 
@@ -603,6 +663,11 @@ export default {
       }
     },
     chart() {
+      /**
+       * Setting Chart
+       * Set of value in chart [chartValueList]
+       * Label of chart [chartLabelList]
+       */
       this.datacollection = {
         labels: this.chartLabelList,
         datasets: [
@@ -612,6 +677,59 @@ export default {
             data: this.chartValueList,
           },
         ],
+      }
+    },
+    previousData() {
+      // ฟังก์ชั่นกดปุ่มย้อนกลับ
+      this.fetchQuery(this.page)
+    },
+    inputData(value) {
+      this.page = value
+      this.fetchQuery(this.page)
+    },
+    nextData() {
+      // ฟังก์ชั่นกดปุ่มถัดไป
+      this.fetchQuery(this.page)
+    },
+    initPage() {
+      this.totalPage = Math.ceil(this.queryList.length / this.perPage)
+      this.fetchQuery(this.page)
+    },
+    fetchQuery(value) {
+      try {
+        let numOfPages = value * this.perPage
+        this.pagesList = []
+
+        if (value === 1) {
+          /**
+           * Initialized pagination pages
+           */
+          for (let i = 0; i < numOfPages; i++) {
+            this.pagesList.push(this.queryList[i])
+          }
+        } else if (numOfPages > this.queryList.length) {
+          /**
+           * This a condition handle null because of [queryList] legnth per [perPage]
+           * (value - 1) for getting last index of previous the page
+           */
+          const startCounter = this.perPage * (value - 1)
+          numOfPages = this.queryList.length
+
+          for (let i = startCounter; i < numOfPages; i++) {
+            this.pagesList.push(this.queryList[i])
+          }
+        } else {
+          /**
+           * (value - 1) for getting last index of previous the page
+           */
+          const startCounter = this.perPage * (value - 1)
+
+          for (let i = startCounter; i < numOfPages; i++) {
+            this.pagesList.push(this.queryList[i])
+          }
+        }
+      } catch (error) {
+        console.log('ERROR fetch query: ', error)
       }
     },
     getRandomInt() {
