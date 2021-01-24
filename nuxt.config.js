@@ -14,10 +14,21 @@ export default {
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
-  css: ['~/assets/fonts/prompt', '~/assets/css/styles.css'],
+
+  css: [
+    '~/assets/fonts/prompt.css',
+    '~/assets/css/styles.css',
+    'vue-select-image/dist/vue-select-image.css',
+  ],
+
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: [{ src: '~/plugins/googleMap', ssr: true }, '~/plugins/vuesax'],
+  plugins: [
+    { src: '~/plugins/googleMap', ssr: true },
+    '~/plugins/vuesax',
+    { src: '~/plugins/selectImage', mode: 'client' },
+    '~/plugins/location-picker',
+  ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,
@@ -33,8 +44,8 @@ export default {
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
     'bootstrap-vue/nuxt',
+    '@nuxtjs/proxy',
     'nuxt-webfontloader',
-
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     [
@@ -53,7 +64,8 @@ export default {
           databaseURL: 'https://eletor-e20d1-default-rtdb.firebaseio.com',
           projectId: 'eletor-e20d1',
           storageBucket: 'eletor-e20d1.appspot.com',
-          messagingSenderId: '947968230344',
+          messag
+          ingSenderId: '947968230344',
           appId: '1:947968230344:web:39447939b86b97be16f6fd',
           measurementId: 'G-LG35PVXDE3',
         },
@@ -77,7 +89,18 @@ export default {
     scss: './scss/*.scss',
   },
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {},
+  axios: {
+    proxy: true,
+  },
+
+  proxy: {
+    '/eletor/api/': {
+      target: 'http://192.168.1.239:3000/eletor/api',
+      pathRewrite: {
+        '^/eletor/api/': '',
+      },
+    },
+  },
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {
@@ -108,9 +131,11 @@ export default {
       },
     },
   },
-
+  publicRuntimeConfig: {
+    baseURL: 'http://192.168.1.236',
+  },
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
-    transpile: [/^vue2-google-maps($|\/)/],
+    transpile: [/^vue2-google-maps($|\/)/, 'vue2-location-picker'],
   },
 }
