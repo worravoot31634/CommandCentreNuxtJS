@@ -1,5 +1,15 @@
 <template>
   <v-card color="basil">
+    <v-container class="justify-center">
+      <v-row class="justify-center pa-2" dense>
+        <v-col cols="11">
+          <h2>
+            <v-icon x-large>mdi-text-box-check-outline</v-icon>
+            รายละเอียดภารกิจ
+          </h2>
+        </v-col>
+      </v-row>
+    </v-container>
     <v-overlay :value="isLoading" opacity="0.7">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
