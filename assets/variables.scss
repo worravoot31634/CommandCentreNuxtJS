@@ -1,0 +1,25 @@
+// Ref: https://github.com/nuxt-community/vuetify-module#customvariables
+//
+// The variables you want to modify
+// $font-size-root: 20px;
+@font-face {
+  font-family: 'Prompt';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('~assets/fonts/Prompt-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Prompt';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('~assets/fonts/Prompt-Medium.ttf') format('truetype');
+}
+
+$body-font-family: 'Prompt';
+$heading-font-family: $body-font-family;
+
+@import '~vuetify/src/styles/styles.sass';
+ 
