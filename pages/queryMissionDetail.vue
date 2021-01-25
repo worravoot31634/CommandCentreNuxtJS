@@ -4,8 +4,8 @@
       <v-row class="justify-center pa-2" dense>
         <v-col cols="11">
           <h2>
-            <v-icon x-large>mdi-text-box-check-outline</v-icon>
-            รายละเอียดภารกิจ
+            <v-icon x-large>mdi-file-document-edit-outline</v-icon>
+            รายงานภารกิจ
           </h2>
         </v-col>
       </v-row>
@@ -104,7 +104,7 @@
                   <v-row class="mt-1" style="padding: 3%">
                     <v-col cols="12" md="16" align="center">
                       <router-link
-                        to="/mission"
+                        to="/missionReport"
                         class="black--text h6"
                         style="text-decoration: none"
                       >
@@ -268,6 +268,112 @@
           </v-card>
         </v-card>
       </v-tab-item>
+      <v-tab-item>
+        <v-card color="basil" flat>
+          <v-container v-if="!isMissionReported">
+            <v-row align="center" justify="center">
+              <img src="../assets/images/box-black.svg" width="20%" />
+            </v-row>
+            <v-row align="center" justify="center">
+              <v-card-title
+                class="justify-center black--text py-10"
+                style="font-size: 50px"
+                >There is no report
+              </v-card-title>
+            </v-row>
+          </v-container>
+          <v-container v-if="isMissionReported">
+            <v-row>
+              <v-item-group>
+                <v-card-title class="black--text">
+                  {{ missionInfo.locationName }}
+                </v-card-title>
+                <v-card-subtitle
+                  >{{ missionInfo.startTimeStamp }}
+                </v-card-subtitle>
+              </v-item-group>
+            </v-row>
+            <v-row>
+              <v-col cols="12" md="6" class="black--text">
+                <v-icon large>mdi-human-wheelchair</v-icon>
+                มีผู้บาดเจ็บหรือไม่ กี่คน
+                <v-col
+                  cols="12"
+                  md="10"
+                  class="grey lighten-3 rounded mx-10 overflow-y-auto"
+                  style="height: 100px"
+                  ><p class="subtitle-2">
+                    {{ missionReportInfo.injuredPersonNumber }}
+                  </p>
+                </v-col>
+              </v-col>
+              <v-col cols="12" md="6" class="black--text">
+                <v-icon large>mdi-road</v-icon>
+                ช้างทำอะไร
+                <v-col
+                  cols="12"
+                  md="10"
+                  class="grey lighten-3 rounded mx-10 overflow-y-auto"
+                  style="height: 100px"
+                  ><p class="subtitle-2">
+                    {{ missionReportInfo.elephantBehavior }}
+                  </p>
+                </v-col>
+              </v-col>
+              <v-col cols="12" md="6" class="black--text">
+                <v-icon large>mdi-numeric</v-icon>
+                พบช้างกี่ตัว
+                <v-col
+                  cols="12"
+                  md="10"
+                  class="grey lighten-3 rounded mx-10 overflow-y-auto"
+                  style="height: 100px"
+                  ><p class="subtitle-2">
+                    {{ missionReportInfo.elephantNumber }}
+                  </p>
+                </v-col>
+              </v-col>
+              <v-col cols="12" md="6" class="black--text">
+                <v-icon large>mdi-head-cog</v-icon> แก้ปัญหาด้วยวิธีอะไร
+                <v-col
+                  cols="12"
+                  md="10"
+                  class="grey lighten-3 rounded mx-10 overflow-y-auto"
+                  style="height: 100px"
+                  ><p class="subtitle-2">
+                    {{ missionReportInfo.solution }}
+                  </p>
+                </v-col>
+              </v-col>
+              <v-col cols="12" md="6" class="black--text">
+                <v-icon large>mdi-home-group</v-icon>
+                มีทรัพย์สินเสียหายหรือไม่
+                <v-col
+                  cols="12"
+                  md="10"
+                  class="grey lighten-3 rounded mx-10 overflow-y-auto"
+                  style="height: 100px"
+                  ><p class="subtitle-2">
+                    {{ missionReportInfo.assetsDamage }}
+                  </p>
+                </v-col>
+              </v-col>
+              <v-col cols="12" md="6" class="black--text">
+                <v-icon large>mdi-poll</v-icon> ผลลัพธ์ในการแก้ปัญหาเป็นอย่างไร
+                <v-col
+                  cols="12"
+                  md="10"
+                  class="grey lighten-3 rounded mx-10 overflow-y-auto"
+                  style="height: 100px"
+                  ><p class="subtitle-2">
+                    {{ missionReportInfo.result }}
+                  </p>
+                </v-col>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card>
+      </v-tab-item>
     </v-tabs-items>
   </v-card>
 </template>
@@ -282,7 +388,11 @@ export default {
       tab: null,
       accept: 'ตกลง',
       cancel: 'ยกเลิก',
-      items: ['รายละเอียดการแจ้งเตือน', 'รายงานการแจ้งเตือน'],
+      items: [
+        'รายละเอียดการแจ้งเตือน',
+        'รายงานการแจ้งเตือน',
+        'รายงานสรุปภารกิจ',
+      ],
       imgElephant: 'ภาพเหตุการณ์',
       sceneOfaccident: 'จุดเกิดเหตุ',
       msg_dialog_trash: 'ท่านต้องการย้ายการแจ้งเตือนไปที่ถังขยะหรือไม่',
@@ -308,6 +418,9 @@ export default {
       isRemoveLoading: false,
       lat: 0,
       lng: 0,
+      missionReportId: null,
+      isMissionReported: false,
+      missionReportInfo: {},
     }
   },
   mounted() {
@@ -323,24 +436,16 @@ export default {
           .get()
           .then((doc) => {
             doc.docs.forEach((e) => {
-              console.log('Severity: ', e.data().severity)
               this.missionInfo = e.data()
               const timestamp = e.data().startTimeStamp.toDate().getTime()
               this.missionInfo.startTimeStamp = this.convertDateTime(timestamp)
               this.missionInfo.severity =
-                e.data().severity === 0
-                  ? 'รุนแรงน้อย'
-                  : doc.severity === 1
-                  ? 'รุนแรงปานกลาง'
-                  : 'รุนแรงมาก'
+                e.data().severity === 1 ? 'รุนแรงมาก' : 'รุนแรงน้อย'
               this.missionInfo.severityColor =
-                e.data().severity === 0
-                  ? 'yellow'
-                  : doc.severity === 1
-                  ? 'orange'
-                  : 'red'
+                e.data().severity === 1 ? 'red' : 'orange'
             })
 
+            this.missionReportId = this.missionInfo.missionReportId
             this.lat = this.missionInfo.latLng.latitude
             this.lng = this.missionInfo.latLng.longitude
             this.markers.position = {
@@ -348,6 +453,7 @@ export default {
               lng: this.missionInfo.latLng.longitude,
             }
 
+            this.getMissionReporting(this.missionReportId)
             this.getAttendants(this.missionInfo.missionId)
           })
       } catch (error) {
@@ -534,9 +640,33 @@ export default {
         console.log('Error convert date time: ', error)
       }
     },
+    async getMissionReporting(missionReportId) {
+      try {
+        console.log('Mission Report ID: ', this.missionReportId)
+
+        if (missionReportId !== null || missionReportId !== undefined) {
+          await this.$fire.firestore
+            .collection('missionReport')
+            .where('missionReportId', '==', missionReportId)
+            .get()
+            .then((querySnapshot) => {
+              if (!querySnapshot.empty) this.isMissionReported = true
+              else this.isMissionReported = false
+
+              querySnapshot.docs.forEach((e) => {
+                this.missionReportInfo = e.data()
+                console.log('MissionReportInfo: ', this.missionReportInfo)
+              })
+            })
+        }
+      } catch (error) {
+        console.log('Error getting mission report: ', error)
+      }
+    },
   },
   created() {
     this.missionId = this.$route.query.mission
+    // this.missionId = 'ZVkWaPN2nXFylEqsmkvr'
   },
 }
 </script>
