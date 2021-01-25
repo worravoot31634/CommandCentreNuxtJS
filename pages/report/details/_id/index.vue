@@ -1,5 +1,15 @@
 <template>
   <v-card color="basil">
+    <v-container class="justify-center">
+      <v-row class="justify-center pa-2" dense>
+        <v-col cols="11">
+          <h2>
+            <v-icon x-large>mdi-text-box-check-outline</v-icon>
+            รายละเอียดภารกิจ
+          </h2>
+        </v-col>
+      </v-row>
+    </v-container>
     <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
       <v-tab
         v-for="item in items"
@@ -34,19 +44,16 @@
                   <v-card-title class="title-text">
                     {{ watcher }}
                   </v-card-title>
-                  <v-col class="watcher-image">
-                    <div class="con-avatars">
-                      <vs-avatar-group max="10">
-                        <vs-avatar
-                          v-for="(item, i) in userReportList"
-                          :key="i"
-                          size="60"
-                          circle
-                        >
-                          <img :src="item.photoURL" alt="" />
-                        </vs-avatar>
-                      </vs-avatar-group>
-                    </div>
+                  <v-col class="watcher-image pt-1 pb-1">
+                    <vs-avatar-group max="10" style="justify-content: left">
+                      <vs-avatar v-for="(item, i) in userReportList" :key="i">
+                        <img
+                          :src="item.photoURL"
+                          alt=""
+                          style="width: 35px; height: 35px"
+                        />
+                      </vs-avatar>
+                    </vs-avatar-group>
                   </v-col>
                   <v-row class="mt-10" style="padding: 3%">
                     <v-col cols="12" md="16" align="center">
@@ -325,7 +332,11 @@
                     <v-container>
                       <v-row>
                         <v-col cols="6" sm="2">
-                          <v-img height="100%" :src="item.imgSrc"></v-img>
+                          <v-img
+                            height="100%"
+                            max-height="200"
+                            :src="item.imgSrc"
+                          ></v-img>
                         </v-col>
                         <v-col cols="6" sm="4">
                           <v-list-item>
@@ -352,7 +363,11 @@
                                 <v-col cols="8" md="4">{{ notice }}</v-col>
                                 <v-col cols="4" md="8" class="text-right">
                                   <v-dialog
-                                    v-model="dialogMoveToTrash"
+                                    v-model="
+                                      dialogMoveToTrash[
+                                        'dialog_' + item.reportId
+                                      ]
+                                    "
                                     max-width="400"
                                   >
                                     <template v-slot:activator="{ on, attrs }">
@@ -382,7 +397,11 @@
                                         <v-btn
                                           color="dark"
                                           text
-                                          @click="dialogMoveToTrash = false"
+                                          @click="
+                                            dialogMoveToTrash[
+                                              'dialog_' + item.reportId
+                                            ] = false
+                                          "
                                         >
                                           {{ cancel }}
                                         </v-btn>
@@ -443,7 +462,7 @@ export default {
       dialogError: false,
       tab: null,
       dialogConfirmCreateMission: false,
-      dialogMoveToTrash: false,
+      dialogMoveToTrash: [],
       accept: 'ตกลง',
       cancel: 'ยกเลิก',
       items: ['รายละเอียดการแจ้งเตือน', 'รายงานการแจ้งเตือน'],
@@ -476,85 +495,117 @@ export default {
     this.initReport()
   },
   watch: {
-    dialogConfirmCreateMission(val) {
-      console.log('dialogConfirmCreateMission: ', val)
-    },
     missionPinedLocation(val) {
-      console.log('A this.locationPickerOptions: ', this.locationPickerOptions)
+      // console.log('A this.locationPickerOptions: ', this.locationPickerOptions)
 
       this.locationPickerOptions.map.zoom = 14
 
-      console.log('B this.locationPickerOptions: ', this.locationPickerOptions)
+      // console.log('B this.locationPickerOptions: ', this.locationPickerOptions)
     },
   },
   methods: {
     async initReport() {
       const currentGroupId = this.$route.params.id
-      const report = await this.$fire.firestore
+      await this.$fire.firestore
         .collection('reports')
         .where('locationGroupId', '==', currentGroupId)
-        .orderBy('timeStamp', 'desc')
-        .get()
+        .orderBy('timeStamp', 'asc')
+        .onSnapshot((querySnapshot) => {
+          querySnapshot.docChanges().forEach(async (change) => {
+            // console.log(doc.id, '=>', doc.data())
+            if (change.type === 'added') {
+              const uid = change.doc.data().accountId
+              const userInfo = await this.$fire.firestore
+                .collection('users')
+                .doc(uid)
+                .get()
 
-      report.forEach(async (doc) => {
-        // console.log(doc.id, '=>', doc.data())
-        const uid = doc.data().accountId
-        const userInfo = await this.$fire.firestore
-          .collection('users')
-          .doc(uid)
-          .get()
+              this.initLatLng.splice(0, 0, change.doc.data().pinLatLng)
+              this.reportList.unshift({
+                reportId: change.doc.data().reportId,
+                accountID: change.doc.data().accountId,
+                imgSrc: change.doc.data().imgSrc,
+                photoURL: userInfo.data().photoURL,
+                displayName: userInfo.data().displayName,
+                timeStamp: this.convertDateTime(
+                  change.doc.data().timeStamp.toDate()
+                ),
+                userTimeStamp: this.convertDateTime(
+                  change.doc.data().userTimeStamp.toDate()
+                ),
+                locationName: change.doc.data().locationName,
+                reportDetails: change.doc.data().reportDetails,
+                pinLatLng: change.doc.data().pinLatLng,
+              })
 
-        this.initLatLng.splice(0, 0, doc.data().pinLatLng)
-        this.reportList.push({
-          reportId: doc.data().reportId,
-          accountID: doc.data().accountId,
-          imgSrc: doc.data().imgSrc,
-          photoURL: userInfo.data().photoURL,
-          displayName: userInfo.data().displayName,
-          timeStamp: this.convertDateTime(doc.data().timeStamp.toDate()),
-          userTimeStamp: this.convertDateTime(
-            doc.data().userTimeStamp.toDate()
-          ),
-          locationName: doc.data().locationName,
-          reportDetails: doc.data().reportDetails,
-          pinLatLng: doc.data().pinLatLng,
+              // console.log('add data: ', this.reportList)
+              this.situationTime = this.convertDateTime(
+                change.doc.data().timeStamp.toDate()
+              )
+              // check exist user
+              const existsUser = this.userReportList.some(
+                (userReport) => userReport.photoURL === userInfo.data().photoURL
+              )
+              if (!existsUser)
+                this.userReportList.unshift({
+                  photoURL: userInfo.data().photoURL,
+                })
+
+              this.missionPinedLocation = {
+                lat: change.doc.data().pinLatLng.latitude,
+                lng: change.doc.data().pinLatLng.longitude,
+              }
+
+              this.dataImages.unshift({
+                id: change.doc.data().reportId,
+                src: change.doc.data().imgSrc,
+                lat: change.doc.data().pinLatLng.latitude,
+                lng: change.doc.data().pinLatLng.longitude,
+              })
+            }
+            if (change.type === 'modified') {
+              console.log('edit!')
+            }
+            if (change.type === 'removed') {
+              let lastData = false
+              const reportLength = await this.$fire.firestore
+                .collection('reports')
+                .where('locationGroupId', '==', this.$route.params.id)
+                .get()
+                .then((document) => document.docs.length)
+
+              if (reportLength === 0) {
+                console.log('reportLength.length: ', reportLength)
+                lastData = true
+              }
+
+              const editedReport = change.doc.data()
+
+              const indexOldReport = this.reportList.findIndex(
+                (report) => report.reportId === editedReport.reportId
+              )
+              console.log('indexOldReport: ', indexOldReport)
+              if (indexOldReport >= 0) {
+                this.reportList.splice(indexOldReport, 1)
+              }
+
+              const indexOldImages = this.dataImages.findIndex(
+                (Images) => Images.id === editedReport.reportId
+              )
+
+              if (indexOldImages >= 0) {
+                this.dataImages.splice(indexOldImages, 1)
+              }
+
+              if (lastData) {
+                this.$router.push('/report')
+              }
+            }
+          })
         })
-        this.situationTime = this.convertDateTime(doc.data().timeStamp.toDate())
-
-        const existsUser = this.userReportList.some(
-          (userReport) => userReport.photoURL === userInfo.data().photoURL
-        )
-        if (!existsUser)
-          this.userReportList.push({ photoURL: userInfo.data().photoURL })
-
-        this.missionPinedLocation = {
-          lat: doc.data().pinLatLng.latitude,
-          lng: doc.data().pinLatLng.longitude,
-        }
-        console.log(
-          'locationPickerOptions: ' + JSON.stringify(this.locationPickerOptions)
-        )
-        this.dataImages.push({
-          id: doc.data().reportId,
-          src: doc.data().imgSrc,
-          lat: doc.data().pinLatLng.latitude,
-          lng: doc.data().pinLatLng.longitude,
-        })
-      })
     },
-    createMission() {
-      // console.log('missionSelectedImg: ' + this.missionSelectedImg)
-      // console.log('missionViolentLevel: ' + this.missionViolentLevel)
-      // console.log('missionDetial: ' + this.missionDetial)
-      // console.log('missionLocationName: ' + this.missionLocationName)
-      // console.log('Location : ' + this.missionPinedLocation)
-      // console.log('missionNumberElephant: ' + this.missionNumberElephant)
-
+    async createMission() {
       const data = {
-        // missionId : 'missionIdTemp',
-        // missionReportId : 'missionReportIdTemp',
-        // missionStatus : false,
-        // missionStatus : 0,
         groupId: this.$route.params.id,
         details: this.missionDetial,
         imgSrc: this.missionSelectedImg.src,
@@ -562,8 +613,6 @@ export default {
         longitude: this.missionPinedLocation.lng,
         severity: this.missionViolentLevel,
         numberElephant: this.missionNumberElephant,
-        // startTimeStamp : 'startDt',
-        // finishTimeStanp : 'finishDt',
         locationName: this.missionLocationName,
       }
       if (
@@ -575,16 +624,17 @@ export default {
       ) {
         this.dialogConfirmCreateMission = true
         console.log(data)
-        // this.$axios.setHeader(
-        //   'Content-Type',
-        //   'application/x-www-form-urlencoded',
-        //   ['post']
-        // )
-        // const res = await this.$axios.post(
-        //   '/eletor/api/mission/createMission',
-        //   data
-        // )
-        // console.log(res)
+        this.$axios.setHeader(
+          'Content-Type',
+          'application/x-www-form-urlencoded',
+          ['post']
+        )
+        console.log('axios: ', this.$axios.defaults.baseURL)
+        const res = await this.$axios.post(
+          '/eletor/api/mission/createMission',
+          data
+        )
+        console.log(res)
       } else {
         this.dialogError = true
       }
@@ -615,12 +665,14 @@ export default {
                 })
             })
         })
-
-      this.dialogMoveToTrash = false
+      this.dialogMoveToTrash['dialog_' + reportId] = false
     },
     onSelectImage(imageInfo) {
       this.missionSelectedImg = imageInfo
-
+      this.missionPinedLocation = {
+        lat: imageInfo.lat,
+        lng: imageInfo.lng,
+      }
       console.log(imageInfo)
     },
     onChangeLocation() {
@@ -648,11 +700,6 @@ export default {
     createSuccess() {
       this.dialogConfirmCreateMission = false
       this.$router.push('/mission')
-    },
-
-    validate({ params }) {
-      // Must be a number
-      return /^\d+$/.text(params.post)
     },
   },
 }

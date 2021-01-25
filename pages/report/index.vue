@@ -63,11 +63,20 @@ export default {
     this.initReport()
   },
   methods: {
+    openNotification(position = null, color) {
+      const noti = this.$vs.notification({
+        color,
+        position,
+        title: 'มีรายงานใหม่จากผู้ใช้',
+        text: 'กรุณาตรวจสอบที่การแจ้งเตือน',
+      })
+      console.log(noti)
+    },
     async initReport() {
       try {
         await this.$fire.firestore
           .collection('reports')
-          .orderBy('timeStamp', 'desc')
+          .orderBy('timeStamp', 'asc')
           .onSnapshot((querySnapshot) => {
             querySnapshot.docChanges().forEach((change) => {
               if (change.type === 'added') {
@@ -77,12 +86,14 @@ export default {
                 )
 
                 if (!exists && change.doc.data().reportStatus === 0) {
+                  console.log('length = ', querySnapshot.docs.length)
+
                   console.log(
                     'datetime: ',
                     change.doc.data().timeStamp.toDate()
                   )
                   console.log('Added: ', change.doc.data().locationGroupId)
-                  this.reportList.push({
+                  this.reportList.unshift({
                     reportId: change.doc.data().reportId,
                     imgSrc: change.doc.data().imgSrc,
                     locationName: change.doc.data().locationName,
