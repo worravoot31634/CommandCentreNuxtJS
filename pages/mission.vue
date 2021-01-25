@@ -98,6 +98,7 @@ export default {
         await this.$fire.firestore
           .collection('mission')
           .where('missionStatus', '==', 0)
+          .orderBy('startTimeStamp', 'desc')
           .onSnapshot((querySnapshot) => {
             querySnapshot.docChanges().forEach((change) => {
               const doc = change.doc.data()
