@@ -3,7 +3,33 @@
     <v-overlay :value="isRestoreLoading" opacity="0.7">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <v-card class="my-10" style="padding: 2%">
+    <v-container class="full-height my-16" fluid v-if="!isTrashNull">
+      <v-row justify="center" align="center">
+        <v-col cols="12" md="12" class="d-flex justify-center align-center">
+          <img src="../assets/images/box.svg" width="20%" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-card-title
+            class="justify-center white--text py-10"
+            style="font-size: 100px"
+            >Empty Trash</v-card-title
+          >
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-card class="my-3 mx-3" style="padding: 2%" v-if="isTrashNull">
+      <v-container class="justify-center">
+        <v-row class="justify-center pa-2" dense>
+          <v-col cols="11">
+            <h2>
+              <v-icon x-large>mdi-recycle</v-icon>
+              ภารกิจปัจจุบัน
+            </h2>
+          </v-col>
+        </v-row>
+      </v-container>
       <v-card
         :key="index"
         v-for="(trash, index) in trashList"
@@ -135,6 +161,7 @@ export default {
       trashList: [],
       restoreTrashList: [],
       isRestoreLoading: false,
+      isTrashNull: true,
     }
   },
   mounted() {
@@ -146,6 +173,10 @@ export default {
         await this.$fire.firestore
           .collection('trashs')
           .onSnapshot((querySnapshot) => {
+            console.log(querySnapshot)
+            if (querySnapshot.empty === true) {
+              this.isTrashNull = false
+            }
             querySnapshot.docChanges().forEach((change) => {
               const docData = change.doc.data()
 
@@ -165,6 +196,12 @@ export default {
                     displayName: eUser.displayName,
                     photoURL: eUser.photoURL,
                   })
+
+                  if (this.trashList.length === 0) {
+                    this.isTrashNull = false
+                  } else {
+                    this.isTrashNull = true
+                  }
                 })
               }
 
