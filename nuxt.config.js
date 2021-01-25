@@ -63,7 +63,7 @@ export default {
           databaseURL: 'https://eletor-e20d1-default-rtdb.firebaseio.com',
           projectId: 'eletor-e20d1',
           storageBucket: 'eletor-e20d1.appspot.com',
-          messagingingSenderId: '947968230344',
+          messagingSenderId: '947968230344',
           appId: '1:947968230344:web:39447939b86b97be16f6fd',
           measurementId: 'G-LG35PVXDE3',
         },
@@ -89,11 +89,12 @@ export default {
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
     proxy: true,
+    baseURL: 'http://it1.sut.ac.th:9026',
   },
 
   proxy: {
     '/eletor/api/': {
-      target: 'http://192.168.1.239:3000/eletor/api',
+      target: 'http://it1.sut.ac.th:9026/eletor/api',
       pathRewrite: {
         '^/eletor/api/': '',
       },
@@ -130,7 +131,7 @@ export default {
     },
   },
   publicRuntimeConfig: {
-    baseURL: 'http://192.168.1.236',
+    baseURL: 'http://it1.sut.ac.th:9026',
   },
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {

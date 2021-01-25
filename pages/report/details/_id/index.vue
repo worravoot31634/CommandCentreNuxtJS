@@ -1,5 +1,15 @@
 <template>
   <v-card color="basil">
+    <v-container class="justify-center">
+      <v-row class="justify-center pa-2" dense>
+        <v-col cols="11">
+          <h2>
+            <v-icon x-large>mdi-text-box-check-outline</v-icon>
+            รายละเอียดภารกิจ
+          </h2>
+        </v-col>
+      </v-row>
+    </v-container>
     <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
       <v-tab
         v-for="item in items"
@@ -499,7 +509,7 @@ export default {
       await this.$fire.firestore
         .collection('reports')
         .where('locationGroupId', '==', currentGroupId)
-        .orderBy('timeStamp', 'desc')
+        .orderBy('timeStamp', 'asc')
         .onSnapshot((querySnapshot) => {
           querySnapshot.docChanges().forEach(async (change) => {
             // console.log(doc.id, '=>', doc.data())
@@ -511,7 +521,7 @@ export default {
                 .get()
 
               this.initLatLng.splice(0, 0, change.doc.data().pinLatLng)
-              this.reportList.push({
+              this.reportList.unshift({
                 reportId: change.doc.data().reportId,
                 accountID: change.doc.data().accountId,
                 imgSrc: change.doc.data().imgSrc,
@@ -537,14 +547,16 @@ export default {
                 (userReport) => userReport.photoURL === userInfo.data().photoURL
               )
               if (!existsUser)
-                this.userReportList.push({ photoURL: userInfo.data().photoURL })
+                this.userReportList.unshift({
+                  photoURL: userInfo.data().photoURL,
+                })
 
               this.missionPinedLocation = {
                 lat: change.doc.data().pinLatLng.latitude,
                 lng: change.doc.data().pinLatLng.longitude,
               }
 
-              this.dataImages.push({
+              this.dataImages.unshift({
                 id: change.doc.data().reportId,
                 src: change.doc.data().imgSrc,
                 lat: change.doc.data().pinLatLng.latitude,
@@ -592,7 +604,7 @@ export default {
           })
         })
     },
-    createMission() {
+    async createMission() {
       const data = {
         groupId: this.$route.params.id,
         details: this.missionDetial,
@@ -612,16 +624,17 @@ export default {
       ) {
         this.dialogConfirmCreateMission = true
         console.log(data)
-        // this.$axios.setHeader(
-        //   'Content-Type',
-        //   'application/x-www-form-urlencoded',
-        //   ['post']
-        // )
-        // const res = await this.$axios.post(
-        //   '/eletor/api/mission/createMission',
-        //   data
-        // )
-        // console.log(res)
+        this.$axios.setHeader(
+          'Content-Type',
+          'application/x-www-form-urlencoded',
+          ['post']
+        )
+        console.log('axios: ', this.$axios.defaults.baseURL)
+        const res = await this.$axios.post(
+          '/eletor/api/mission/createMission',
+          data
+        )
+        console.log(res)
       } else {
         this.dialogError = true
       }

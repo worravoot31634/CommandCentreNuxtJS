@@ -50,7 +50,7 @@
                     <v-list-item>
                       <div class="pa-3 red rounded-circle d-inline-block"></div>
                       <v-card-title class="pt-0 pb-0 red--text">
-                        รุนแรงมาก
+                        {{ item.level }}
                       </v-card-title>
                     </v-list-item>
                     <v-card-title class="pt-0 black--text">
@@ -98,6 +98,7 @@ export default {
         await this.$fire.firestore
           .collection('mission')
           .where('missionStatus', '==', 0)
+          .orderBy('startTimeStamp', 'asc')
           .onSnapshot((querySnapshot) => {
             querySnapshot.docChanges().forEach((change) => {
               const doc = change.doc.data()
@@ -108,10 +109,15 @@ export default {
               if (change.type === 'added') {
                 console.log('Added: ', change.doc.data())
                 const reportTime = doc.startTimeStamp.toDate().getTime()
-                this.items.push({
+                this.items.unshift({
                   missionId: doc.missionId,
                   img: doc.imgSrc,
-                  level: doc.severity !== 0 ? 'รุนแรงมาก' : 'รุนแรงน้อย',
+                  level:
+                    doc.severity === 0
+                      ? 'รุนแรงน้อย'
+                      : doc.severity === 1
+                      ? 'รุนแรงปานกลาง'
+                      : 'รุนแรงน้อย',
                   locationName: doc.locationName,
                   reportTime: this.convertDateTime(reportTime),
                   locations: {
@@ -127,7 +133,12 @@ export default {
                 editMission = {
                   missionId: doc.missionId,
                   img: doc.imgSrc,
-                  level: doc.severity !== 0 ? 'รุนแรงมาก' : 'รุนแรงน้อย',
+                  level:
+                    doc.severity === 0
+                      ? 'รุนแรงน้อย'
+                      : doc.severity === 1
+                      ? 'รุนแรงปานกลาง'
+                      : 'รุนแรงน้อย',
                   locationName: doc.locationName,
                   reportTime: this.convertDateTime(reportTime),
                   locations: {

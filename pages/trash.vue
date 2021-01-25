@@ -25,7 +25,7 @@
           <v-col cols="11">
             <h2>
               <v-icon x-large>mdi-recycle</v-icon>
-              ภารกิจปัจจุบัน
+              ถังขยะ
             </h2>
           </v-col>
         </v-row>
@@ -192,7 +192,7 @@ export default {
                     missionId: docData.missionId,
                     detail: docData.reportDetails,
                     reportId: docData.reportId,
-                    timeStamp: this.convertDateTime(docData.timeStamp.seconds),
+                    timeStamp: this.convertDateTime(docData.timeStamp.toDate()),
                     displayName: eUser.displayName,
                     photoURL: eUser.photoURL,
                   })
