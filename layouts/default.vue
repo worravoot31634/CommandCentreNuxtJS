@@ -7,11 +7,13 @@
       fixed
       app
     >
-      <!-- <v-img
-        src="https://static.vecteezy.com/system/resources/thumbnails/000/585/267/small/1maret-11.jpg"
-        max-height="64"
-        class="grey darken-4"
-      ></v-img> -->
+      <v-container>
+        <v-img
+          src="https://firebasestorage.googleapis.com/v0/b/eletor-e20d1.appspot.com/o/icon%2Feletor_icon.png?alt=media&token=fd011890-6004-4029-8072-43662effd7e5"
+          max-height="70"
+          class="grey darken-4"
+        ></v-img
+      ></v-container>
       <!-- <v-toolbar-title class="navTitle" fill-height v-text="title" /> -->
       <v-list>
         <v-list-item
