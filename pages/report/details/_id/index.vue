@@ -2,11 +2,9 @@
   <v-card color="basil">
     <v-container class="justify-center">
       <v-row class="justify-center pa-2" dense>
-        <v-col cols="11">
-          <h2>
-            <v-icon x-large>mdi-text-box-check-outline</v-icon>
-            รายละเอียดภารกิจ
-          </h2>
+        <v-col color="black" cols="11" class="text-h5">
+          <v-icon color="black" large>mdi-text-box-check-outline</v-icon>
+          รายละเอียดการแจ้งเหตุ
         </v-col>
       </v-row>
     </v-container>
@@ -14,7 +12,8 @@
       <v-tab
         v-for="item in items"
         :key="item"
-        style="font-weight: bold; font-size: 1.2em"
+        style="font-weight: bold"
+        class="text-subtitle-1"
       >
         {{ item }}
       </v-tab>
@@ -22,14 +21,15 @@
 
     <v-tabs-items v-model="tab">
       <v-tab-item>
-        <v-card color="basil" flat>
+        <v-card class="pa-3" flat>
           <v-container>
             <v-row>
               <v-col cols="12" md="6">
                 <v-card ref="reportInfo" height="100%">
-                  <v-card-title class="title-text">
+                  <v-card-title class="title-text text-subtitle-1">
                     {{ imgElephant }}
                   </v-card-title>
+
                   <v-carousel hide-delimiters height="300" style="padding: 2%">
                     <v-carousel-item
                       v-for="(item, i) in reportList"
@@ -37,24 +37,29 @@
                       :src="item.imgSrc"
                     ></v-carousel-item>
                   </v-carousel>
-                  <v-card-title class="title-text"></v-card-title>
+                  <v-card-title class="title-text text-subtitle-1">{{
+                    missionLocationNameShow
+                  }}</v-card-title>
                   <v-card-subtitle>
                     {{ situationTime }}
                   </v-card-subtitle>
-                  <v-card-title class="title-text">
+
+                  <v-card-title class="title-text text-subtitle-1">
                     {{ watcher }}
                   </v-card-title>
-                  <v-col class="watcher-image pt-1 pb-1">
-                    <vs-avatar-group max="10" style="justify-content: left">
-                      <vs-avatar v-for="(item, i) in userReportList" :key="i">
-                        <img
-                          :src="item.photoURL"
-                          alt=""
-                          style="width: 35px; height: 35px"
-                        />
-                      </vs-avatar>
-                    </vs-avatar-group>
-                  </v-col>
+                  <v-card-subtitle>
+                    <v-col class="watcher-image pt-1 pb-1">
+                      <vs-avatar-group max="10" style="justify-content: left">
+                        <vs-avatar v-for="(item, i) in userReportList" :key="i">
+                          <img
+                            :src="item.photoURL"
+                            alt=""
+                            style="width: 35px; height: 35px"
+                          />
+                        </vs-avatar>
+                      </vs-avatar-group>
+                    </v-col>
+                  </v-card-subtitle>
                   <v-row class="mt-10" style="padding: 3%">
                     <v-col cols="12" md="16" align="center">
                       <v-btn class="px-8 mx-10" @click="goToReport()">
@@ -271,7 +276,7 @@
 
               <v-col cols="12" md="6">
                 <v-card height="100%">
-                  <v-card-title class="title-text">
+                  <v-card-title class="title-text text-subtitle-1">
                     {{ sceneOfaccident }}
                   </v-card-title>
                   <v-list-item-content style="padding: 2%" height="100%">
@@ -318,14 +323,6 @@
         <v-card color="basil" flat>
           <v-row>
             <v-col>
-              <v-card-title class="title-text">{{
-                sceneOfaccident
-              }}</v-card-title>
-            </v-col>
-          </v-row>
-
-          <v-row>
-            <v-col>
               <v-row v-for="(item, i) in reportList" :key="i">
                 <v-col>
                   <v-card>
@@ -338,14 +335,14 @@
                             :src="item.imgSrc"
                           ></v-img>
                         </v-col>
-                        <v-col cols="6" sm="4">
+                        <v-col cols="6" sm="5">
                           <v-list-item>
                             <v-avatar>
                               <img :src="item.photoURL" alt="userImg" />
                             </v-avatar>
                             <v-list-item-content class="px-2">
                               <v-list-item-title class="h3 pt-1">
-                                {{ item.displayName }}
+                                ผู้แจ้ง: {{ item.displayName }}
                               </v-list-item-title>
                               <v-list-item-title class="pt-1">
                                 {{ item.locationName }}
@@ -353,10 +350,88 @@
                               <v-list-item-subtitle class="pt-1">
                                 {{ item.timeStamp }}
                               </v-list-item-subtitle>
+                              <v-list-item-title class="pt-1">
+                                จำนวนช้างที่พบ: 1
+                              </v-list-item-title>
+                              <v-list-item-subtitle class="pt-1">
+                                <v-row>
+                                  <v-col
+                                    class="d-flex justify-center"
+                                    cols="6"
+                                    md="3"
+                                  >
+                                    <vs-tooltip>
+                                      <i
+                                        :style="
+                                          'color: ' + item.colorAngry + ''
+                                        "
+                                        :class="
+                                          'bx bx-angry ' +
+                                          item.animateAngry +
+                                          ' bx-md'
+                                        "
+                                      ></i>
+                                      <template #tooltip> ตกมัน </template>
+                                    </vs-tooltip>
+                                  </v-col>
+                                  <v-col
+                                    class="d-flex justify-center"
+                                    cols="6"
+                                    md="3"
+                                  >
+                                    <vs-tooltip>
+                                      <i
+                                        :class="'bx ' + item.animateOnRoad + ''"
+                                      >
+                                        <v-icon large :color="item.colorOnRoad">
+                                          mdi-road-variant</v-icon
+                                        >
+                                      </i>
+                                      <template #tooltip> ขวางถนน </template>
+                                    </vs-tooltip>
+                                  </v-col>
+                                  <v-col
+                                    class="d-flex justify-center"
+                                    cols="6"
+                                    md="3"
+                                  >
+                                    <vs-tooltip>
+                                      <i
+                                        :class="
+                                          'bx bx-restaurant ' +
+                                          item.animateEat +
+                                          ' bx-md'
+                                        "
+                                        :style="'color: ' + item.colorEat + ''"
+                                      ></i>
+                                      <template #tooltip> กินอาหาร </template>
+                                    </vs-tooltip>
+                                  </v-col>
+                                  <v-col
+                                    class="d-flex justify-center"
+                                    cols="6"
+                                    md="3"
+                                  >
+                                    <vs-tooltip>
+                                      <i
+                                        :class="
+                                          'bx bxs-car-crash ' +
+                                          item.animateDestroy +
+                                          ' bx-md'
+                                        "
+                                        :style="
+                                          'color: ' + item.colorDestroy + ''
+                                        "
+                                      ></i>
+                                      <template #tooltip> ทำลายของ </template>
+                                    </vs-tooltip>
+                                  </v-col>
+                                </v-row>
+                              </v-list-item-subtitle>
                             </v-list-item-content>
                           </v-list-item>
                         </v-col>
-                        <v-col cols="12" sm="6">
+                        <v-col cols="12" sm="5">
                           <v-list-item-group>
                             <v-list-item-title>
                               <v-row class="h3 pt-1 title-text">
@@ -465,7 +540,7 @@ export default {
       dialogMoveToTrash: [],
       accept: 'ตกลง',
       cancel: 'ยกเลิก',
-      items: ['รายละเอียดการแจ้งเตือน', 'รายงานการแจ้งเตือน'],
+      items: ['รายละเอียดการแจ้งเหตุ', 'รายงานการแจ้งเหตุ'],
       imgElephant: 'ภาพเหตุการณ์',
       sceneOfaccident: 'จุดเกิดเหตุ',
       msg_dialog_trash: 'ท่านต้องการย้ายการแจ้งเตือนไปที่ถังขยะหรือไม่',
@@ -479,6 +554,7 @@ export default {
       missionNumberElephant: '',
       missionViolentLevel: '',
       missionLocationName: '',
+      missionLocationNameShow: '',
       missionDetial: '',
       missionPinedLocation: [],
       selectedImages: '',
@@ -520,6 +596,38 @@ export default {
                 .doc(uid)
                 .get()
 
+              const elephantCharacterTmpAllFalse = [
+                {
+                  eat: false,
+                },
+                {
+                  onRoad: false,
+                },
+                {
+                  angry: false,
+                },
+                {
+                  destroy: false,
+                },
+              ]
+
+              let elephantCharacterTmp
+
+              if (change.doc.data().elephantCharacteristics.length > 0) {
+                console.log('elephantCharacteristics NOT NULL')
+                elephantCharacterTmp = change.doc.data().elephantCharacteristics
+              } else {
+                elephantCharacterTmp = elephantCharacterTmpAllFalse
+                console.log('elephantCharacteristics IS NULL')
+              }
+
+              console.log('elephantTmp: ', elephantCharacterTmp)
+
+              const animateActive = 'bx-tada'
+              const animateNoActive = ''
+              const colorActive = 'red'
+              const colorNoActive = 'grey'
+
               this.initLatLng.splice(0, 0, change.doc.data().pinLatLng)
               this.reportList.unshift({
                 reportId: change.doc.data().reportId,
@@ -536,9 +644,37 @@ export default {
                 locationName: change.doc.data().locationName,
                 reportDetails: change.doc.data().reportDetails,
                 pinLatLng: change.doc.data().pinLatLng,
+                elephantCharacteristics: elephantCharacterTmp,
+                colorEat: elephantCharacterTmp[0].eat
+                  ? colorActive
+                  : colorNoActive,
+                colorOnRoad: elephantCharacterTmp[1].onRoad
+                  ? colorActive
+                  : colorNoActive,
+                colorAngry: elephantCharacterTmp[2].angry
+                  ? colorActive
+                  : colorNoActive,
+                colorDestroy: elephantCharacterTmp[3].destroy
+                  ? colorActive
+                  : colorNoActive,
+                animateEat: elephantCharacterTmp[0].eat
+                  ? animateActive
+                  : animateNoActive,
+                animateOnRoad: elephantCharacterTmp[1].onRoad
+                  ? animateActive
+                  : animateNoActive,
+                animateAngry: elephantCharacterTmp[2].angry
+                  ? animateActive
+                  : animateNoActive,
+                animateDestroy: elephantCharacterTmp[3].destroy
+                  ? animateActive
+                  : animateNoActive,
               })
 
-              // console.log('add data: ', this.reportList)
+              console.log('DATA: ', this.reportList)
+
+              this.missionLocationNameShow = change.doc.data().locationName
+
               this.situationTime = this.convertDateTime(
                 change.doc.data().timeStamp.toDate()
               )

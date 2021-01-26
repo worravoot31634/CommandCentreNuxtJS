@@ -5,7 +5,7 @@
         <v-container class="justify-center">
           <v-row class="justify-center pa-2" dense>
             <v-col cols="11">
-              <h2><v-icon x-large>mdi-bell</v-icon> การแจ้งเตือน</h2>
+              <h2><v-icon x-large>mdi-bell</v-icon> การแจ้งเหตุ</h2>
             </v-col>
           </v-row>
         </v-container>
@@ -76,6 +76,7 @@ export default {
       try {
         await this.$fire.firestore
           .collection('reports')
+          .where('reportStatus', '==', 0)
           .orderBy('timeStamp', 'asc')
           .onSnapshot((querySnapshot) => {
             querySnapshot.docChanges().forEach((change) => {
@@ -85,14 +86,7 @@ export default {
                     report.groupId === change.doc.data().locationGroupId
                 )
 
-                if (!exists && change.doc.data().reportStatus === 0) {
-                  console.log('length = ', querySnapshot.docs.length)
-
-                  console.log(
-                    'datetime: ',
-                    change.doc.data().timeStamp.toDate()
-                  )
-                  console.log('Added: ', change.doc.data().locationGroupId)
+                if (!exists) {
                   this.reportList.unshift({
                     reportId: change.doc.data().reportId,
                     imgSrc: change.doc.data().imgSrc,

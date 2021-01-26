@@ -19,6 +19,7 @@ export default {
     '~/assets/fonts/prompt.css',
     '~/assets/css/styles.css',
     'vue-select-image/dist/vue-select-image.css',
+    'boxicons/css/boxicons.min.css',
   ],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)

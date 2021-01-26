@@ -89,7 +89,7 @@ export default {
         },
         {
           icon: 'mdi-bell',
-          title: 'การแจ้งเตือน',
+          title: 'การแจ้งเหตุ',
           to: '/report',
         },
         {

@@ -48,8 +48,16 @@
                 <v-col cols="12" md="7">
                   <v-list-item-content>
                     <v-list-item>
-                      <div class="pa-3 red rounded-circle d-inline-block"></div>
-                      <v-card-title class="pt-0 pb-0 red--text">
+                      <div
+                        :class="
+                          'pa-3 ' +
+                          item.severityColor +
+                          ' rounded-circle d-inline-block'
+                        "
+                      ></div>
+                      <v-card-title
+                        :class="'pt-0 pb-0 ' + item.severityColor + '--text'"
+                      >
                         {{ item.level }}
                       </v-card-title>
                     </v-list-item>
@@ -107,7 +115,7 @@ export default {
               else this.isMissionNull = true
 
               if (change.type === 'added') {
-                console.log('Added: ', change.doc.data())
+                // console.log('Added: ', change.doc.data())
                 const reportTime = doc.startTimeStamp.toDate().getTime()
                 this.items.unshift({
                   missionId: doc.missionId,
@@ -117,7 +125,13 @@ export default {
                       ? 'รุนแรงน้อย'
                       : doc.severity === 1
                       ? 'รุนแรงปานกลาง'
-                      : 'รุนแรงน้อย',
+                      : 'รุนแรงมาก',
+                  severityColor:
+                    doc.severity === 0
+                      ? 'yellow'
+                      : doc.severity === 1
+                      ? 'orange'
+                      : 'red',
                   locationName: doc.locationName,
                   reportTime: this.convertDateTime(reportTime),
                   locations: {
