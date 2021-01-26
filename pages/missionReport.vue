@@ -201,52 +201,62 @@
                     >
                   </v-col>
                 </v-row>
-                <v-card
+                <v-container
                   class="my-2"
                   :key="index"
                   v-for="(mission, index) in pagesList"
                 >
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12" md="4" align-self="center">
-                        <v-card style="height: 100%" fluid>
-                          <!-- IMAGE -->
-                          <v-img
-                            :src="mission.imgSrc"
-                            style="min-height: 100px; height: 100px"
-                          />
-                        </v-card>
-                      </v-col>
-                      <v-col cols="12" md="8">
-                        <v-list-item-content>
-                          <v-list-item>
-                            <div
-                              :class="
-                                'pa-3 ' +
-                                mission.levelColor +
-                                ' rounded-circle d-inline-block'
-                              "
-                            ></div>
-                            <v-card-title
-                              :class="
-                                'pt-0 pb-0 ' +
-                                mission.levelColor +
-                                '--text darken-1'
-                              "
-                              >{{ mission.level }}</v-card-title
-                            >
-                          </v-list-item>
-                          <v-card-title class="pt-0 black--text">{{
-                            mission.locationName
-                          }}</v-card-title>
-                          <v-card-subtitle class="col-12 text-truncate">
-                            {{ mission.details }}
-                          </v-card-subtitle>
-                        </v-list-item-content>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card>
+                  <v-hover>
+                    <template v-slot:default="{ hover }">
+                      <v-card
+                        :elevation="hover ? 8 : 4"
+                        @click="getIndex(index)"
+                        class="mx-auto transition-swing"
+                        style="cursor: pointer"
+                      >
+                        <v-row>
+                          <v-col cols="12" md="4" align-self="center">
+                            <v-col style="height: 100%" fluid class="py-2 px-2">
+                              <!-- IMAGE -->
+                              <v-img
+                                class="rounded"
+                                :src="mission.imgSrc"
+                                style="min-height: 100px; height: 100px"
+                              />
+                            </v-col>
+                          </v-col>
+                          <v-col cols="12" md="8">
+                            <v-list-item-content>
+                              <v-list-item>
+                                <div
+                                  :class="
+                                    'pa-3 ' +
+                                    mission.levelColor +
+                                    ' rounded-circle d-inline-block'
+                                  "
+                                ></div>
+                                <v-card-title
+                                  :class="
+                                    'pt-0 pb-0 ' +
+                                    mission.levelColor +
+                                    '--text darken-1'
+                                  "
+                                  >{{ mission.level }}</v-card-title
+                                >
+                              </v-list-item>
+                              <v-card-title class="pt-0 black--text">{{
+                                mission.locationName
+                              }}</v-card-title>
+                              <v-card-subtitle class="col-12 text-truncate">
+                                {{ mission.details }}
+                              </v-card-subtitle>
+                            </v-list-item-content>
+                          </v-col>
+                        </v-row>
+                      </v-card>
+                    </template>
+                  </v-hover>
+                </v-container>
                 <v-row>
                   <v-col>
                     <div class="text-center py-1">
@@ -626,6 +636,7 @@ export default {
         }
 
         this.queryList.push({
+          missionId: query.missionId,
           imgSrc: query.imgSrc,
           details: query.details,
           locationName: query.locationName,
@@ -657,6 +668,7 @@ export default {
         }
 
         const newDataQuery = {
+          missionId: query.missionId,
           imgSrc: query.imgSrc,
           details: query.details,
           locationName: query.locationName,
@@ -746,6 +758,15 @@ export default {
     getHeightElement() {
       const elmnt = document.getElementById('infoCard')
       console.log(elmnt.offsetHeight)
+    },
+    getIndex(index) {
+      console.log('Index:: ', index)
+      this.$router.push({
+        path: 'queryMissionDetail',
+        query: {
+          mission: this.queryList[index].missionId,
+        },
+      })
     },
   },
 }
