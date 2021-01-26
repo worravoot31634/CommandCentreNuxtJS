@@ -351,7 +351,7 @@
                                 {{ item.timeStamp }}
                               </v-list-item-subtitle>
                               <v-list-item-title class="pt-1">
-                                จำนวนช้างที่พบ: 1
+                                จำนวนช้างที่พบ: {{ item.elephantAmount }}
                               </v-list-item-title>
                               <v-list-item-subtitle class="pt-1">
                                 <v-row>
@@ -625,7 +625,7 @@ export default {
 
               const animateActive = 'bx-tada'
               const animateNoActive = ''
-              const colorActive = 'red'
+              const colorActive = '#f05454'
               const colorNoActive = 'grey'
 
               this.initLatLng.splice(0, 0, change.doc.data().pinLatLng)
@@ -644,6 +644,7 @@ export default {
                 locationName: change.doc.data().locationName,
                 reportDetails: change.doc.data().reportDetails,
                 pinLatLng: change.doc.data().pinLatLng,
+                elephantAmount: change.doc.data().elephantAmount,
                 elephantCharacteristics: elephantCharacterTmp,
                 colorEat: elephantCharacterTmp[0].eat
                   ? colorActive
