@@ -167,11 +167,10 @@
             class="mb-5"
             :key="indexReport"
             v-for="(report, indexReport) in reportsList"
-            height="15%"
           >
             <v-container>
               <v-row>
-                <v-col cols="6" sm="2">
+                <v-col cols="6" sm="2" style="height: 200px">
                   <v-img height="100%" :src="report.imgSrc"></v-img>
                 </v-col>
                 <v-col cols="6" sm="4">
