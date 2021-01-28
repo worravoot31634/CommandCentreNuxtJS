@@ -335,7 +335,7 @@
                             :src="item.imgSrc"
                           ></v-img>
                         </v-col>
-                        <v-col cols="6" sm="5">
+                        <v-col cols="6" sm="5" style="height: 50px">
                           <v-list-item>
                             <v-avatar>
                               <img :src="item.photoURL" alt="userImg" />

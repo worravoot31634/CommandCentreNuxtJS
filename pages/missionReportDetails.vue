@@ -188,6 +188,62 @@
                       <v-list-item-subtitle class="subtitle-text pt-1">
                         {{ report.timeStamp }}
                       </v-list-item-subtitle>
+                      <v-list-item-title class="pt-1">
+                        จำนวนช้างที่พบ: {{ report.elephantAmount }}
+                      </v-list-item-title>
+                      <v-list-item-subtitle class="pt-1">
+                        <v-row>
+                          <v-col class="d-flex justify-center" cols="6" md="3">
+                            <vs-tooltip>
+                              <i
+                                :style="'color: ' + report.colorAngry + ''"
+                                :class="
+                                  'bx bx-angry ' +
+                                  report.animateAngry +
+                                  ' bx-md'
+                                "
+                              ></i>
+                              <template #tooltip> ตกมัน </template>
+                            </vs-tooltip>
+                          </v-col>
+                          <v-col class="d-flex justify-center" cols="6" md="3">
+                            <vs-tooltip>
+                              <i :class="'bx ' + report.animateOnRoad + ''">
+                                <v-icon large :color="report.colorOnRoad">
+                                  mdi-road-variant</v-icon
+                                >
+                              </i>
+                              <template #tooltip> ขวางถนน </template>
+                            </vs-tooltip>
+                          </v-col>
+                          <v-col class="d-flex justify-center" cols="6" md="3">
+                            <vs-tooltip>
+                              <i
+                                :class="
+                                  'bx bx-restaurant ' +
+                                  report.animateEat +
+                                  ' bx-md'
+                                "
+                                :style="'color: ' + report.colorEat + ''"
+                              ></i>
+                              <template #tooltip> กินอาหาร </template>
+                            </vs-tooltip>
+                          </v-col>
+                          <v-col class="d-flex justify-center" cols="6" md="3">
+                            <vs-tooltip>
+                              <i
+                                :class="
+                                  'bx bxs-car-crash ' +
+                                  report.animateDestroy +
+                                  ' bx-md'
+                                "
+                                :style="'color: ' + report.colorDestroy + ''"
+                              ></i>
+                              <template #tooltip> ทำลายของ </template>
+                            </vs-tooltip>
+                          </v-col>
+                        </v-row>
+                      </v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
                 </v-col>
@@ -322,7 +378,6 @@ export default {
           .get()
           .then((doc) => {
             doc.docs.forEach((e) => {
-              console.log('Severity: ', e.data().severity)
               this.missionInfo = e.data()
               const timestamp = e.data().startTimeStamp.toDate().getTime()
               this.missionInfo.startTimeStamp = this.convertDateTime(timestamp)
@@ -362,6 +417,33 @@ export default {
             querySnapshot.docChanges().forEach((change) => {
               const docData = change.doc.data()
 
+              const elephantCharacterTmpAllFalse = [
+                {
+                  eat: false,
+                },
+                {
+                  onRoad: false,
+                },
+                {
+                  angry: false,
+                },
+                {
+                  destroy: false,
+                },
+              ]
+
+              let elephantCharacterTmp
+
+              if (change.doc.data().elephantCharacteristics.length > 0) {
+                console.log('elephantCharacteristics NOT NULL')
+                elephantCharacterTmp = change.doc.data().elephantCharacteristics
+              } else {
+                elephantCharacterTmp = elephantCharacterTmpAllFalse
+                console.log('elephantCharacteristics IS NULL')
+              }
+
+              console.log('elephantTmp: ', elephantCharacterTmp)
+
               if (change.type === 'added') {
                 console.log('Added: ', change.doc.data())
 
@@ -384,15 +466,45 @@ export default {
                     })
                   }
 
+                  const animateActive = 'bx-tada'
+                  const animateNoActive = ''
+                  const colorActive = '#f05454'
+                  const colorNoActive = 'grey'
+
                   this.reportsList.push({
                     reportId: docData.reportId,
                     missionId: docData.missionId,
                     locationName: docData.locationName,
+                    elephantAmount: docData.elephantAmount,
                     imgSrc: docData.imgSrc,
                     detail: docData.reportDetails,
                     timeStamp: this.convertDateTime(docData.timeStamp.seconds),
                     photoURL: eUser.photoURL,
                     displayName: eUser.displayName,
+                    colorEat: elephantCharacterTmp[0].eat
+                      ? colorActive
+                      : colorNoActive,
+                    colorOnRoad: elephantCharacterTmp[1].onRoad
+                      ? colorActive
+                      : colorNoActive,
+                    colorAngry: elephantCharacterTmp[2].angry
+                      ? colorActive
+                      : colorNoActive,
+                    colorDestroy: elephantCharacterTmp[3].destroy
+                      ? colorActive
+                      : colorNoActive,
+                    animateEat: elephantCharacterTmp[0].eat
+                      ? animateActive
+                      : animateNoActive,
+                    animateOnRoad: elephantCharacterTmp[1].onRoad
+                      ? animateActive
+                      : animateNoActive,
+                    animateAngry: elephantCharacterTmp[2].angry
+                      ? animateActive
+                      : animateNoActive,
+                    animateDestroy: elephantCharacterTmp[3].destroy
+                      ? animateActive
+                      : animateNoActive,
                   })
                 })
               }

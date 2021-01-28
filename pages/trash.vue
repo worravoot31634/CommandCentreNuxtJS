@@ -42,6 +42,8 @@
               <v-img
                 max-height="300"
                 max-width="500"
+                width="100%"
+                height="180"
                 :src="trash.imgSrc"
               ></v-img>
             </v-col>
@@ -59,6 +61,58 @@
                   </v-list-item-title>
                   <v-list-item-subtitle class="pt-1">
                     {{ trash.timeStamp }}
+                  </v-list-item-subtitle>
+                  <v-list-item-title class="pt-1">
+                    จำนวนช้างที่พบ: {{ trash.elephantAmount }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle class="pt-1">
+                    <v-row>
+                      <v-col class="d-flex justify-center" cols="6" md="3">
+                        <vs-tooltip>
+                          <i
+                            :style="'color: ' + trash.colorAngry + ''"
+                            :class="
+                              'bx bx-angry ' + trash.animateAngry + ' bx-md'
+                            "
+                          ></i>
+                          <template #tooltip> ตกมัน </template>
+                        </vs-tooltip>
+                      </v-col>
+                      <v-col class="d-flex justify-center" cols="6" md="3">
+                        <vs-tooltip>
+                          <i :class="'bx ' + trash.animateOnRoad + ''">
+                            <v-icon large :color="trash.colorOnRoad">
+                              mdi-road-variant</v-icon
+                            >
+                          </i>
+                          <template #tooltip> ขวางถนน </template>
+                        </vs-tooltip>
+                      </v-col>
+                      <v-col class="d-flex justify-center" cols="6" md="3">
+                        <vs-tooltip>
+                          <i
+                            :class="
+                              'bx bx-restaurant ' + trash.animateEat + ' bx-md'
+                            "
+                            :style="'color: ' + trash.colorEat + ''"
+                          ></i>
+                          <template #tooltip> กินอาหาร </template>
+                        </vs-tooltip>
+                      </v-col>
+                      <v-col class="d-flex justify-center" cols="6" md="3">
+                        <vs-tooltip>
+                          <i
+                            :class="
+                              'bx bxs-car-crash ' +
+                              trash.animateDestroy +
+                              ' bx-md'
+                            "
+                            :style="'color: ' + trash.colorDestroy + ''"
+                          ></i>
+                          <template #tooltip> ทำลายของ </template>
+                        </vs-tooltip>
+                      </v-col>
+                    </v-row>
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -180,6 +234,37 @@ export default {
             querySnapshot.docChanges().forEach((change) => {
               const docData = change.doc.data()
 
+              const elephantCharacterTmpAllFalse = [
+                {
+                  eat: false,
+                },
+                {
+                  onRoad: false,
+                },
+                {
+                  angry: false,
+                },
+                {
+                  destroy: false,
+                },
+              ]
+
+              let elephantCharacterTmp
+
+              if (change.doc.data().elephantCharacteristics.length > 0) {
+                console.log('elephantCharacteristics NOT NULL')
+                elephantCharacterTmp = change.doc.data().elephantCharacteristics
+              } else {
+                elephantCharacterTmp = elephantCharacterTmpAllFalse
+                console.log('elephantCharacteristics IS NULL')
+              }
+              console.log('elephantTmp: ', elephantCharacterTmp)
+
+              const animateActive = 'bx-tada'
+              const animateNoActive = ''
+              const colorActive = '#f05454'
+              const colorNoActive = 'grey'
+
               if (change.type === 'added') {
                 console.log('Added: ', change.doc.data())
 
@@ -195,6 +280,32 @@ export default {
                     timeStamp: this.convertDateTime(docData.timeStamp.toDate()),
                     displayName: eUser.displayName,
                     photoURL: eUser.photoURL,
+                    elephantAmount: change.doc.data().elephantAmount,
+                    elephantCharacteristics: elephantCharacterTmp,
+                    colorEat: elephantCharacterTmp[0].eat
+                      ? colorActive
+                      : colorNoActive,
+                    colorOnRoad: elephantCharacterTmp[1].onRoad
+                      ? colorActive
+                      : colorNoActive,
+                    colorAngry: elephantCharacterTmp[2].angry
+                      ? colorActive
+                      : colorNoActive,
+                    colorDestroy: elephantCharacterTmp[3].destroy
+                      ? colorActive
+                      : colorNoActive,
+                    animateEat: elephantCharacterTmp[0].eat
+                      ? animateActive
+                      : animateNoActive,
+                    animateOnRoad: elephantCharacterTmp[1].onRoad
+                      ? animateActive
+                      : animateNoActive,
+                    animateAngry: elephantCharacterTmp[2].angry
+                      ? animateActive
+                      : animateNoActive,
+                    animateDestroy: elephantCharacterTmp[3].destroy
+                      ? animateActive
+                      : animateNoActive,
                   })
 
                   if (this.trashList.length === 0) {
