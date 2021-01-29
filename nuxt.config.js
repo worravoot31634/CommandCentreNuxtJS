@@ -10,7 +10,9 @@ export default {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/assets/icons/favicon.ico' },
+    ],
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
@@ -43,10 +45,10 @@ export default {
 
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
+    '@nuxtjs/auth',
     'bootstrap-vue/nuxt',
     '@nuxtjs/proxy',
     'nuxt-webfontloader',
-    // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     [
       'nuxt-gmaps',
@@ -75,6 +77,32 @@ export default {
       },
     ],
   ],
+  auth: {
+    redirect: {
+      login: '/login',
+    },
+    strategies: {
+      local: {
+        endpoints: {
+          login: {
+            url: '/eletor/api/user/signIn',
+            method: 'post',
+            propertyName: 'user.auth_jwt',
+          },
+          logout: {
+            url: '/eletor/api/user/signOut',
+            method: 'delete',
+          },
+          user: {
+            url: '/eletor/api/user/getUser',
+            method: 'get',
+            propertyName: 'user',
+          },
+        },
+        tokenName: 'auth-token',
+      },
+    },
+  },
   bootstrapVue: {
     bootstrapCSS: false,
     bootstrapVueCSS: false,
@@ -95,7 +123,7 @@ export default {
 
   proxy: {
     '/eletor/api/': {
-      target: 'http://it1.sut.ac.th:9026/eletor/api',
+      target: 'http://192.168.1.239:3000/eletor/api',
       pathRewrite: {
         '^/eletor/api/': '',
       },

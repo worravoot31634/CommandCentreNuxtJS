@@ -74,7 +74,7 @@
 <script>
 import { gmapApi } from 'vue2-google-maps'
 export default {
-  components: {},
+  middleware: 'auth',
   data() {
     return {
       currentLocation: {},
