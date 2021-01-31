@@ -43,10 +43,10 @@ export default {
 
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
+    // '@nuxtjs/auth',
     'bootstrap-vue/nuxt',
     '@nuxtjs/proxy',
     'nuxt-webfontloader',
-    // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     [
       'nuxt-gmaps',
@@ -75,6 +75,32 @@ export default {
       },
     ],
   ],
+  // auth: {
+  //   redirect: {
+  //     login: '/login',
+  //   },
+  //   strategies: {
+  //     local: {
+  //       endpoints: {
+  //         login: {
+  //           url: '/eletor/api/user/signIn',
+  //           method: 'post',
+  //           propertyName: 'user.auth_jwt',
+  //         },
+  //         logout: {
+  //           url: '/eletor/api/user/signOut',
+  //           method: 'delete',
+  //         },
+  //         user: {
+  //           url: '/eletor/api/user/getUser',
+  //           method: 'get',
+  //           propertyName: 'user',
+  //         },
+  //       },
+  //       tokenName: 'auth-token',
+  //     },
+  //   },
+  // },
   bootstrapVue: {
     bootstrapCSS: false,
     bootstrapVueCSS: false,
@@ -89,8 +115,8 @@ export default {
   },
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
-    proxy: true,
-    baseURL: 'http://it1.sut.ac.th:9026',
+    proxy: false,
+    baseURL: 'http://it1.sut.ac.th:9026/eletor/api',
   },
 
   proxy: {
