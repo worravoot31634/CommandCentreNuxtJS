@@ -80,7 +80,7 @@ export default {
         {
           icon: 'mdi-map',
           title: 'แผนที่',
-          to: '/',
+          to: '/home',
         },
         {
           icon: 'mdi-chart-bubble',
