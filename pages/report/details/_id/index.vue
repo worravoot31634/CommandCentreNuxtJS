@@ -766,12 +766,22 @@ export default {
           'application/x-www-form-urlencoded',
           ['post']
         )
-        console.log('axios: ', this.$axios.defaults.baseURL)
-        const res = await this.$axios.post(
-          '/eletor/api/mission/createMission',
-          data
-        )
-        console.log(res)
+        this.$axios.setHeader({ 'Access-Control-Allow-Origin': '*' })
+        // console.log('axios: ', this.$axios.defaults.baseURL)
+        // const res = await this.$axios.post(
+        //   '/eletor/api/mission/createMission',
+        //   data
+        // )
+
+        await this.$axios
+          .$post('/eletor/api/mission/createMission', data, {
+            headers: { 'Access-Control-Allow-Origin': '*' },
+          })
+          .then((res) => {
+            console.log(res)
+          })
+
+        // console.log(res)
       } else {
         this.dialogError = true
       }

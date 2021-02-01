@@ -115,8 +115,10 @@ export default {
   },
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
-    proxy: false,
+    proxy: true,
     baseURL: 'http://it1.sut.ac.th:9026/eletor/api',
+    proxyHeaders: false,
+    credentials: false,
   },
 
   proxy: {
