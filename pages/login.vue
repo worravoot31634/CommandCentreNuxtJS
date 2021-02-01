@@ -24,7 +24,7 @@ export default {
   methods: {
     async handleLoginClicked() {
       try {
-        const response = await this.$auth.loginWith('local', {
+        await this.$auth.loginWith('local', {
           data: { user: { email: this.email, password: this.password } },
         })
       } catch (err) {

@@ -2,6 +2,10 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
+  target: 'static',
+  router: {
+    base: '/project63_g26',
+  },
   head: {
     titleTemplate: '%s - Command Centre',
     title: 'Home',
@@ -160,10 +164,11 @@ export default {
     },
   },
   publicRuntimeConfig: {
-    baseURL: 'http://it1.sut.ac.th:9026',
+    baseURL: 'https://it2.sut.ac.th/project63_g26/',
   },
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
     transpile: [/^vue2-google-maps($|\/)/, 'vue2-location-picker'],
+    publicPath: 'https://it2.sut.ac.th/project63_g26/',
   },
 }

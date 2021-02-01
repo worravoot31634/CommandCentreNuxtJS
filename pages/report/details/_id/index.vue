@@ -757,8 +757,7 @@ export default {
           .$post('/eletor/api/mission/createMission', data, {
             headers: { 'Access-Control-Allow-Origin': '*' },
           })
-          .then((res) => {
-          })
+          .then((res) => {})
       } else {
         this.dialogError = true
       }
@@ -782,8 +781,7 @@ export default {
                 .collection('reports')
                 .doc(reportId)
                 .delete()
-                .then(function (doc) {
-                })
+                .then(function (doc) {})
             })
         })
       this.dialogMoveToTrash['dialog_' + reportId] = false
@@ -795,8 +793,7 @@ export default {
         lng: imageInfo.lng,
       }
     },
-    onChangeLocation() {
-    },
+    onChangeLocation() {},
     convertDateTime(microsecond) {
       const date = new Date(microsecond)
       const dateLocal = date.toLocaleDateString('th-TH', {

@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     openNotification(position = null, color) {
-      const noti = this.$vs.notification({
+      this.$vs.notification({
         color,
         position,
         title: 'มีรายงานใหม่จากผู้ใช้',

@@ -441,7 +441,6 @@ export default {
               }
 
               if (change.type === 'added') {
-
                 const indexImgReport = this.reportImages.findIndex(
                   (re) => re.imgSrc === docData.imgSrc
                 )

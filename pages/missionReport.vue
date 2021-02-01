@@ -425,6 +425,7 @@ export default {
         /// Dynamic List follow by [chartLabelList] length
         if (this.chartOption === 2) {
           for (const x in this.chartLabelList) {
+            console.log(x)
             this.chartYearList.push(0)
           }
         }
@@ -751,9 +752,6 @@ export default {
     },
     getRandomInt() {
       return Math.floor(Math.random() * (50 - 5 + 1)) + 5
-    },
-    getHeightElement() {
-      const elmnt = document.getElementById('infoCard')
     },
     getIndex(index) {
       this.$router.push({
