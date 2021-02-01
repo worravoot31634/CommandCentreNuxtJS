@@ -227,7 +227,6 @@ export default {
         await this.$fire.firestore
           .collection('trashs')
           .onSnapshot((querySnapshot) => {
-            console.log(querySnapshot)
             if (querySnapshot.empty === true) {
               this.isTrashNull = false
             }
@@ -252,13 +251,10 @@ export default {
               let elephantCharacterTmp
 
               if (change.doc.data().elephantCharacteristics.length > 0) {
-                console.log('elephantCharacteristics NOT NULL')
                 elephantCharacterTmp = change.doc.data().elephantCharacteristics
               } else {
                 elephantCharacterTmp = elephantCharacterTmpAllFalse
-                console.log('elephantCharacteristics IS NULL')
               }
-              console.log('elephantTmp: ', elephantCharacterTmp)
 
               const animateActive = 'bx-tada'
               const animateNoActive = ''

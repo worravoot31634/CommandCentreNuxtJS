@@ -370,11 +370,9 @@ export default {
   computed: {
     google: gmapApi,
     computedStartDateFormatted() {
-      console.log('startDate before convert: ' + this.startDate)
       return this.startDate ? moment(this.startDate).format('Do MMMM YYYY') : ''
     },
     computedEndDateFormatted() {
-      console.log('endDateMenu before convert: ' + this.endDate)
       return this.endDate ? moment(this.endDate).format('Do MMMM YYYY') : ''
     },
   },
@@ -427,7 +425,6 @@ export default {
         /// Dynamic List follow by [chartLabelList] length
         if (this.chartOption === 2) {
           for (const x in this.chartLabelList) {
-            console.log(x)
             this.chartYearList.push(0)
           }
         }
@@ -757,10 +754,8 @@ export default {
     },
     getHeightElement() {
       const elmnt = document.getElementById('infoCard')
-      console.log(elmnt.offsetHeight)
     },
     getIndex(index) {
-      console.log('Index:: ', index)
       this.$router.push({
         path: 'queryMissionDetail',
         query: {

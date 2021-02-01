@@ -548,18 +548,12 @@ export default {
               const colorNoActive = 'grey'
 
               if (change.doc.data().elephantCharacteristics.length > 0) {
-                console.log('elephantCharacteristics NOT NULL')
                 elephantCharacterTmp = change.doc.data().elephantCharacteristics
               } else {
                 elephantCharacterTmp = elephantCharacterTmpAllFalse
-                console.log('elephantCharacteristics IS NULL')
               }
 
-              console.log('elephantTmp: ', elephantCharacterTmp)
-
               if (change.type === 'added') {
-                console.log('Added: ', change.doc.data())
-
                 const indexImgReport = this.reportImages.findIndex(
                   (re) => re.imgSrc === docData.imgSrc
                 )
@@ -619,7 +613,6 @@ export default {
               }
 
               if (change.type === 'modified') {
-                console.log('Modified: ', change.doc.data())
               }
 
               if (change.type === 'removed') {
@@ -654,7 +647,6 @@ export default {
               const docData = change.doc.data()
 
               if (change.type === 'added') {
-                console.log('Added: ', change.doc.data())
                 this.getAttendantsInfo(docData.uid, (user) => {
                   this.attendantImages.push({ imageSrc: user.photoURL })
                 })
@@ -662,11 +654,9 @@ export default {
               }
 
               if (change.type === 'modified') {
-                console.log('Modified: ', change.doc.data())
               }
 
               if (change.type === 'removed') {
-                console.log('Removed: ', change.doc.data())
                 const dataRemoving = change.doc.data()
 
                 this.getAttendantsInfo(dataRemoving.uid, (user) => {
@@ -756,8 +746,6 @@ export default {
     },
     async getMissionReporting(missionReportId) {
       try {
-        console.log('Mission Report ID: ', this.missionReportId)
-
         if (missionReportId !== null || missionReportId !== undefined) {
           await this.$fire.firestore
             .collection('missionReport')

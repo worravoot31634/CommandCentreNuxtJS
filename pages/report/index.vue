@@ -76,7 +76,6 @@ export default {
         title: 'มีรายงานใหม่จากผู้ใช้',
         text: 'กรุณาตรวจสอบที่การแจ้งเตือน',
       })
-      console.log(noti)
     },
     async initReport() {
       try {
@@ -103,12 +102,11 @@ export default {
                     groupId: change.doc.data().locationGroupId,
                   })
                 } else {
-                  console.log('not Exist')
+                  console.log('Error not Exist')
                 }
               }
 
               if (change.type === 'modified') {
-                console.log('Modified: ', change.doc.data())
                 const editedReport = change.doc.data()
                 const indexOldReport = this.reportList.findIndex(
                   (report) => report.reportId === editedReport.reportId
@@ -116,7 +114,6 @@ export default {
                 this.$set(this.reportList, indexOldReport, editedReport)
               }
               if (change.type === 'removed') {
-                console.log('Removed: ', change.doc.data())
                 const editedReport = change.doc.data()
                 const indexOldReport = this.reportList.findIndex(
                   (report) => report.reportId === editedReport.reportId
@@ -143,7 +140,6 @@ export default {
       return dateLocal
     },
     showDetail(gId) {
-      console.log('gId is ' + gId)
       this.$router.push({ path: 'report/details/' + gId })
     },
   },

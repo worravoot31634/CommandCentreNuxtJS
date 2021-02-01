@@ -572,11 +572,7 @@ export default {
   },
   watch: {
     missionPinedLocation(val) {
-      // console.log('A this.locationPickerOptions: ', this.locationPickerOptions)
-
       this.locationPickerOptions.map.zoom = 14
-
-      // console.log('B this.locationPickerOptions: ', this.locationPickerOptions)
     },
   },
   methods: {
@@ -588,7 +584,6 @@ export default {
         .orderBy('timeStamp', 'asc')
         .onSnapshot((querySnapshot) => {
           querySnapshot.docChanges().forEach(async (change) => {
-            // console.log(doc.id, '=>', doc.data())
             if (change.type === 'added') {
               const uid = change.doc.data().accountId
               const userInfo = await this.$fire.firestore
@@ -614,14 +609,10 @@ export default {
               let elephantCharacterTmp
 
               if (change.doc.data().elephantCharacteristics.length > 0) {
-                console.log('elephantCharacteristics NOT NULL')
                 elephantCharacterTmp = change.doc.data().elephantCharacteristics
               } else {
                 elephantCharacterTmp = elephantCharacterTmpAllFalse
-                console.log('elephantCharacteristics IS NULL')
               }
-
-              console.log('elephantTmp: ', elephantCharacterTmp)
 
               const animateActive = 'bx-tada'
               const animateNoActive = ''
@@ -672,8 +663,6 @@ export default {
                   : animateNoActive,
               })
 
-              console.log('DATA: ', this.reportList)
-
               this.missionLocationNameShow = change.doc.data().locationName
 
               this.situationTime = this.convertDateTime(
@@ -701,7 +690,6 @@ export default {
               })
             }
             if (change.type === 'modified') {
-              console.log('edit!')
             }
             if (change.type === 'removed') {
               let lastData = false
@@ -712,7 +700,6 @@ export default {
                 .then((document) => document.docs.length)
 
               if (reportLength === 0) {
-                console.log('reportLength.length: ', reportLength)
                 lastData = true
               }
 
@@ -721,7 +708,6 @@ export default {
               const indexOldReport = this.reportList.findIndex(
                 (report) => report.reportId === editedReport.reportId
               )
-              console.log('indexOldReport: ', indexOldReport)
               if (indexOldReport >= 0) {
                 this.reportList.splice(indexOldReport, 1)
               }
@@ -760,42 +746,31 @@ export default {
         data.numberElephant !== ''
       ) {
         this.dialogConfirmCreateMission = true
-        console.log(data)
         this.$axios.setHeader(
           'Content-Type',
           'application/x-www-form-urlencoded',
           ['post']
         )
         this.$axios.setHeader({ 'Access-Control-Allow-Origin': '*' })
-        // console.log('axios: ', this.$axios.defaults.baseURL)
-        // const res = await this.$axios.post(
-        //   '/eletor/api/mission/createMission',
-        //   data
-        // )
 
         await this.$axios
           .$post('/eletor/api/mission/createMission', data, {
             headers: { 'Access-Control-Allow-Origin': '*' },
           })
           .then((res) => {
-            console.log(res)
           })
-
-        // console.log(res)
       } else {
         this.dialogError = true
       }
     },
     async moveToTrash(reportId) {
       const self = this
-      console.log('reportId: ', reportId)
       await self.$fire.firestore
         .collection('reports')
         .doc(reportId.toString())
         .get()
         .then(async function (doc) {
           reportId = doc.data().reportId.toString()
-          console.log(doc.data())
           // copy data to trash
           await self.$fire.firestore
             .collection('trashs')
@@ -808,7 +783,6 @@ export default {
                 .doc(reportId)
                 .delete()
                 .then(function (doc) {
-                  console.log('remove success')
                 })
             })
         })
@@ -820,10 +794,8 @@ export default {
         lat: imageInfo.lat,
         lng: imageInfo.lng,
       }
-      console.log(imageInfo)
     },
     onChangeLocation() {
-      console.log(this.missionPinedLocation)
     },
     convertDateTime(microsecond) {
       const date = new Date(microsecond)

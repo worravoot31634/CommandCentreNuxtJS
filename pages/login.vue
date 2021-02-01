@@ -27,7 +27,6 @@ export default {
         const response = await this.$auth.loginWith('local', {
           data: { user: { email: this.email, password: this.password } },
         })
-        console.log(response)
       } catch (err) {
         console.log(err)
       }

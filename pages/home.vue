@@ -121,8 +121,6 @@ export default {
               const missionDocs = change.doc.data()
 
               if (change.type === 'added') {
-                console.log('Added: ', change.doc.data())
-
                 situationTime = missionDocs.startTimeStamp.toDate().getTime()
                 this.locations.push({
                   locationName: missionDocs.locationName,
@@ -139,11 +137,9 @@ export default {
               }
 
               if (change.type === 'modified') {
-                console.log('Modified: ', change.doc.data())
               }
 
               if (change.type === 'removed') {
-                console.log('Removed: ', change.doc.data())
                 const indexChange = this.locations.findIndex(
                   (loc) => loc.imgSrc === change.doc.data().imgSrc
                 )

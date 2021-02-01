@@ -115,7 +115,6 @@ export default {
               else this.isMissionNull = true
 
               if (change.type === 'added') {
-                // console.log('Added: ', change.doc.data())
                 const reportTime = doc.startTimeStamp.toDate().getTime()
                 this.items.unshift({
                   missionId: doc.missionId,
@@ -141,7 +140,6 @@ export default {
                 })
               }
               if (change.type === 'modified') {
-                console.log('Modified: ', change.doc.data())
                 const reportTime = doc.startTimeStamp.toDate().getTime()
 
                 editMission = {
@@ -166,8 +164,6 @@ export default {
                 this.$set(this.items, indexChange, editMission)
               }
               if (change.type === 'removed') {
-                console.log('Removed: ', change.doc.data())
-
                 const indexRemove = this.items.findIndex(
                   (id) => id.missionId === doc.missionId
                 )
