@@ -21,7 +21,7 @@
         <v-row class="justify-center pa-2" dense>
           <v-col cols="11">
             <h2>
-              <v-icon x-large>mdi-arrow-decision-outline</v-icon>
+              <v-icon x-large>mdi-chart-bubble</v-icon>
               ภารกิจปัจจุบัน
             </h2>
           </v-col>

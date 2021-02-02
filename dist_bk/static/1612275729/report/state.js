@@ -1,0 +1,1 @@
+window.__NUXT__={staticAssetsBase:"https:\u002F\u002Fit2.sut.ac.th\u002Fproject63_g26\u002Fstatic\u002F1612275729",layout:"default",error:null,state:{},serverRendered:true,routePath:"\u002Freport",config:{baseURL:"https:\u002F\u002Fit2.sut.ac.th\u002Fproject63_g26"}};

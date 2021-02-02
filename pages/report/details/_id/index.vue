@@ -4,7 +4,7 @@
       <v-row class="justify-center pa-2" dense>
         <v-col color="black" cols="11" class="text-h5">
           <v-icon color="black" large>mdi-text-box-check-outline</v-icon>
-          รายละเอียดการแจ้งเหตุ
+          <b> รายละเอียดการแจ้งเหตุ </b>
         </v-col>
       </v-row>
     </v-container>
@@ -15,7 +15,7 @@
         style="font-weight: bold"
         class="text-subtitle-1"
       >
-        {{ item }}
+        <b> {{ item }} </b>
       </v-tab>
     </v-tabs>
 
@@ -26,7 +26,7 @@
             <v-row>
               <v-col cols="12" md="6">
                 <v-card ref="reportInfo" height="100%">
-                  <v-card-title class="title-text text-subtitle-1">
+                  <v-card-title class="title-text">
                     {{ imgElephant }}
                   </v-card-title>
 
@@ -37,14 +37,14 @@
                       :src="item.imgSrc"
                     ></v-carousel-item>
                   </v-carousel>
-                  <v-card-title class="title-text text-subtitle-1">{{
+                  <v-card-title class="title-text">{{
                     missionLocationNameShow
                   }}</v-card-title>
                   <v-card-subtitle>
                     {{ situationTime }}
                   </v-card-subtitle>
 
-                  <v-card-title class="title-text text-subtitle-1">
+                  <v-card-title class="title-text">
                     {{ watcher }}
                   </v-card-title>
                   <v-card-subtitle>
@@ -180,6 +180,7 @@
                                                 type="number"
                                                 label="1"
                                                 value="1"
+                                                min="1"
                                                 solo
                                               >
                                               </v-text-field>
@@ -276,7 +277,7 @@
 
               <v-col cols="12" md="6">
                 <v-card height="100%">
-                  <v-card-title class="title-text text-subtitle-1">
+                  <v-card-title class="title-text">
                     {{ sceneOfaccident }}
                   </v-card-title>
                   <v-list-item-content style="padding: 2%" height="100%">
@@ -521,6 +522,7 @@
   </v-card>
 </template>
 
+<script src="https://unpkg.com/boxicons@latest/dist/boxicons.js"></script>
 <script>
 export default {
   data() {
@@ -551,7 +553,7 @@ export default {
       initLatLng: [{ latitude: 0, longitude: 0 }],
       /** Mission **/
       missionSelectedImg: [],
-      missionNumberElephant: '',
+      missionNumberElephant: '1',
       missionViolentLevel: '',
       missionLocationName: '',
       missionLocationNameShow: '',
@@ -743,9 +745,9 @@ export default {
         data.imgSrc !== '' &&
         data.details !== '' &&
         data.severity !== '' &&
-        data.numberElephant !== ''
+        data.numberElephant !== '' &&
+        parseInt(data.numberElephant) > 0
       ) {
-        this.dialogConfirmCreateMission = true
         this.$axios.setHeader(
           'Content-Type',
           'application/x-www-form-urlencoded',
@@ -754,10 +756,21 @@ export default {
         this.$axios.setHeader({ 'Access-Control-Allow-Origin': '*' })
 
         await this.$axios
-          .$post('/eletor/api/mission/createMission', data, {
-            headers: { 'Access-Control-Allow-Origin': '*' },
+          .$post(
+            'http://it1.sut.ac.th:9026/eletor/api/mission/createMission',
+            data,
+            {
+              headers: { 'Access-Control-Allow-Origin': '*' },
+            }
+          )
+          .then((res) => {
+            if (res.status === 200) {
+              this.dialogConfirmCreateMission = true
+            } else {
+              this.dialogError = true
+            }
+            console.log(res)
           })
-          .then((res) => {})
       } else {
         this.dialogError = true
       }

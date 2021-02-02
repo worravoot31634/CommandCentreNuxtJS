@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/trash", {data:[{}],fetch:[],mutations:[]});

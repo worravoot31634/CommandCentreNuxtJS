@@ -690,7 +690,7 @@ export default {
         labels: this.chartLabelList,
         datasets: [
           {
-            label: 'อัตราการแจ้งเตือน',
+            label: 'อัตราการแจ้งเหตุ',
             backgroundColor: '#475520',
             data: this.chartValueList,
           },

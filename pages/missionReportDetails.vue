@@ -2,11 +2,9 @@
   <v-card color="basil">
     <v-container class="justify-center">
       <v-row class="justify-center pa-2" dense>
-        <v-col cols="11">
-          <h2>
-            <v-icon x-large>mdi-text-box-check-outline</v-icon>
-            รายละเอียดภารกิจ
-          </h2>
+        <v-col color="black" cols="11" class="text-h5">
+          <v-icon color="black" large>mdi-text-box-check-outline</v-icon>
+          <b> รายละเอียดภารกิจ </b>
         </v-col>
       </v-row>
     </v-container>
@@ -14,14 +12,19 @@
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <v-tabs v-model="tab" background-color="transparent" color="basil" grow>
-      <v-tab v-for="item in items" :key="item">
-        <h2>{{ item }}</h2>
+      <v-tab
+        v-for="item in items"
+        :key="item"
+        style="font-weight: bold"
+        class="text-subtitle-1"
+      >
+        <b>{{ item }}</b>
       </v-tab>
     </v-tabs>
 
     <v-tabs-items v-model="tab">
       <v-tab-item>
-        <v-card color="basil" flat>
+        <v-card class="pa-3" flat>
           <v-container>
             <v-row>
               <v-col cols="12" md="6">
@@ -326,7 +329,7 @@
     </v-tabs-items>
   </v-card>
 </template>
-
+<script src="https://unpkg.com/boxicons@latest/dist/boxicons.js"></script>
 <script>
 export default {
   components: {},
@@ -337,10 +340,10 @@ export default {
       tab: null,
       accept: 'ตกลง',
       cancel: 'ยกเลิก',
-      items: ['รายละเอียดการแจ้งเตือน', 'รายงานการแจ้งเตือน'],
+      items: ['รายละเอียดการแจ้งเหตุ', 'รายงานการแจ้งเหตุ'],
       imgElephant: 'ภาพเหตุการณ์',
       sceneOfaccident: 'จุดเกิดเหตุ',
-      msg_dialog_trash: 'ท่านต้องการย้ายการแจ้งเตือนไปที่ถังขยะหรือไม่',
+      msg_dialog_trash: 'ท่านต้องการย้ายการแจ้งเหตุไปที่ถังขยะหรือไม่',
       reportImages: [],
       severityLevel: 'รุนแรงมาก',
       locationName: 'หมู่บ้านเขาใหญ่',
@@ -379,7 +382,7 @@ export default {
           .then((doc) => {
             doc.docs.forEach((e) => {
               this.missionInfo = e.data()
-              const timestamp = e.data().startTimeStamp.toDate().getTime()
+              const timestamp = e.data().startTimeStamp.toDate()
               this.missionInfo.startTimeStamp = this.convertDateTime(timestamp)
               this.missionInfo.severity =
                 e.data().severity === 0
@@ -472,7 +475,7 @@ export default {
                     elephantAmount: docData.elephantAmount,
                     imgSrc: docData.imgSrc,
                     detail: docData.reportDetails,
-                    timeStamp: this.convertDateTime(docData.timeStamp.seconds),
+                    timeStamp: this.convertDateTime(docData.timeStamp.toDate()),
                     photoURL: eUser.photoURL,
                     displayName: eUser.displayName,
                     colorEat: elephantCharacterTmp[0].eat
@@ -651,24 +654,13 @@ export default {
 .basil--text {
   color: #356859 !important;
 }
-.row {
-  color: #356859;
-}
+
 .title-text {
+  color: #000;
   font-weight: bold;
   font-size: 1.2rem;
-  font-family: 'Prompt';
 }
-.subtitle-text {
-  color: rgb(196, 196, 196);
-  font-weight: bold;
-  font-size: 1rem;
-  font-family: 'Prompt';
-}
-.mdc-typography-styles-headline1 {
-  font-family: 'Prompt';
-  font-size: 50;
-}
+
 .action-center {
   display: flex;
   align-items: center;

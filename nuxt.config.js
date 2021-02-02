@@ -7,14 +7,26 @@ export default {
     base: '/project63_g26',
   },
   head: {
-    titleTemplate: '%s - Command Centre',
+    titleTemplate: 'Command Centre',
     title: 'Home',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      {
+        rel: 'stylesheet',
+        href: 'https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css',
+      },
+    ],
+    script: [
+      {
+        src: 'https://unpkg.com/boxicons@latest/dist/boxicons.js',
+        type: 'text/javascript',
+      },
+    ],
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
@@ -23,7 +35,6 @@ export default {
     '~/assets/fonts/prompt.css',
     '~/assets/css/styles.css',
     'vue-select-image/dist/vue-select-image.css',
-    'boxicons/css/boxicons.min.css',
   ],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
@@ -119,19 +130,10 @@ export default {
   },
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
-    proxy: true,
+    proxy: false,
     baseURL: 'http://it1.sut.ac.th:9026/eletor/api',
     proxyHeaders: false,
     credentials: false,
-  },
-
-  proxy: {
-    '/eletor/api/': {
-      target: 'http://it1.sut.ac.th:9026/eletor/api',
-      pathRewrite: {
-        '^/eletor/api/': '',
-      },
-    },
   },
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
@@ -164,11 +166,11 @@ export default {
     },
   },
   publicRuntimeConfig: {
-    baseURL: 'https://it2.sut.ac.th/project63_g26/',
+    baseURL: 'https://it2.sut.ac.th/project63_g26',
   },
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
     transpile: [/^vue2-google-maps($|\/)/, 'vue2-location-picker'],
-    publicPath: 'https://it2.sut.ac.th/project63_g26/',
+    publicPath: 'https://it2.sut.ac.th/project63_g26',
   },
 }

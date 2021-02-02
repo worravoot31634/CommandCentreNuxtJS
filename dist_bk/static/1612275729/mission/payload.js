@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/mission", {data:[{}],fetch:[],mutations:[]});

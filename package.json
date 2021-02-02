@@ -2,14 +2,8 @@
   "name": "command_centre",
   "version": "1.0.0",
   "private": true,
-  "config": {
-    "nuxt": {
-      "host": "127.0.0.1",
-      "port": "3333"
-    }
-  },
   "scripts": {
-    "dev": "nuxt --HOSTNAME 127.0.0.1 --port 3333",
+    "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",

@@ -68,7 +68,7 @@
     </v-footer> -->
   </v-app>
 </template>
-
+<script src="https://unpkg.com/boxicons@latest/dist/boxicons.js"></script>
 <script>
 export default {
   data() {
